@@ -4,7 +4,7 @@ export default defineAppConfig({
     'pages/interaction/index',
     'pages/profile/index',
     'pages/login/index',
-    'pages/word/index',
+    'pages/word/index'
   ],
   window: {
     backgroundTextStyle: 'light',

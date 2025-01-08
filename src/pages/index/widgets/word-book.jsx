@@ -1,12 +1,21 @@
 import { Text, View } from "@tarojs/components";
 import { Card } from "../components/card";
+import Taro from "@tarojs/taro";
 
 export function WordBook() {
+  const goToWord = () => {
+    Taro.navigateTo({
+      url: "/pages/word/index",
+    });
+  };
   return (
     <Card title={"每日任务"}>
       <View className="flex mt-3">
         <View className="flex flex-col w-60 items-center">
-          <View className="w-20 h-28 bg-slate-600 rounded-md text-white font-semibold -ml-3 mb-1">
+          <View
+            onClick={goToWord}
+            className="w-20 h-28 bg-slate-600 rounded-md text-white font-semibold -ml-3 mb-1"
+          >
             考研
           </View>
           <Text className="text-[22rpx]">点击词书可以进行切换哦</Text>

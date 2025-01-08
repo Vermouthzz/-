@@ -1,60 +1,23 @@
-import { View } from "@tarojs/components";
-import { Form, Input, Button } from "@nutui/nutui-react-taro";
+import { Form, Input, Label, View } from "@tarojs/components";
 import React from "react";
 
 export default function Login() {
   return (
-    <View>
-      <Form
-        labelPosition="right"
-        footer={
-          <>
-            <Button nativeType="submit" block type="primary">
-              提交
-            </Button>
-          </>
-        }
-      >
-        <Form.Item
-          align="center"
-          required
-          label="用户名"
-          name="username"
-          rules={[
-            { max: 5, message: "字段A不能超过5个字" },
-            { required: true, message: "请输入字段A" },
-            {
-              validator: () => {
-                return value.length > 5;
-              },
-            },
-          ]}
-        >
-          <Input
-            className="nut-input-text"
-            placeholder="请输入字段A"
-            type="text"
-          />
-        </Form.Item>
-        <Form.Item
-          label="密码"
-          name="password"
-          rules={[
-            { max: 15, message: "字段D不能超过15个字" },
-            { required: true, message: "请输入字段D" },
-          ]}
-        >
-          <Input
-            className="nut-input-text"
-            placeholder="请输入字段A"
-            type="text"
-          />
-        </Form.Item>
+    <View className="h-screen">
+      <Form className="mx-auto">
+        <View className="flex">
+          <Label>账号</Label>
+          <Input></Input>
+        </View>
+        <View className="flex">
+          <Label>密码</Label>
+          <Input></Input>
+        </View>
+        <View className="py-4 text-center text-white">提交</View>
+        <View className="flex mt-2">
+          <Text className="ml-auto mr-3">注册</Text>
+        </View>
       </Form>
-
-      <Button nativeType="submit" block type="primary">
-        提交
-      </Button>
     </View>
   );
 }
