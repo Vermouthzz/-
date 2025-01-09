@@ -61,6 +61,7 @@
     "@tarojs/runtime": "4.0.8",
     "@tarojs/shared": "4.0.8",
     "@tarojs/taro": "4.0.8",
+    "clsx": "^2.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
@@ -82,6 +83,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.4.0",
     "postcss": "^8.4.49",
+    "postcss-rem-to-responsive-pixel": "^6.0.2",
     "react-refresh": "^0.14.0",
     "sass": "^1.75.0",
     "stylelint": "^16.4.0",

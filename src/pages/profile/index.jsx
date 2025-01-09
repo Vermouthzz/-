@@ -1,8 +1,13 @@
 import { View } from "@tarojs/components";
-import { Avatar } from "@nutui/nutui-react-taro";
+import { Avatar, Button } from "@nutui/nutui-react-taro";
 
 export default function Profile() {
-  return <View className="">111</View>;
+  return (
+    <View className="">
+      111
+      <Button type="primary">哈哈哈哈</Button>
+    </View>
+  );
 }
 
 function ProfileTop() {

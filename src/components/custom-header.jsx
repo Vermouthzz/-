@@ -1,11 +1,17 @@
 import { Image, Text, View } from "@tarojs/components";
 // import Taro, { createSelectorQuery, useReady } from "@tarojs/taro";
 import { useNavigation } from "../hooks/useNavigation";
-export function CustomHeader({ center, children, color = "#fff", title }) {
+export function CustomHeader({
+  center,
+  children,
+  color = "#fff",
+  title,
+  className,
+}) {
   const { height, pt } = useNavigation().navigationInfo;
   return (
     <View
-      className="flex items-center relative"
+      className={`${className} flex items-center relative`}
       style={{ height: `${height}px`, paddingTop: `${pt}px` }}
       id="custom-header"
     >
