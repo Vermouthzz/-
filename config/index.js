@@ -25,9 +25,9 @@ export default defineConfig(async (merge, { command, mode }) => {
       // 全局使用 Taro 默认的 750 尺寸
       return 750
     },
-    // sass: {
-    //   data: `@import "@nutui/nutui-taro/dist/styles/variables.scss";`,
-    // },
+    sass: {
+      data: `@use "@nutui/nutui-react-taro/dist/styles/variables.scss" as *;`,
+    },
     defineConstants: {
     },
     copy: {
@@ -65,7 +65,7 @@ export default defineConfig(async (merge, { command, mode }) => {
           }
         },
         htmltransform: {
-          enable: true,
+          enable: false,
             config: {
               removeCursorStyle: false,
             }

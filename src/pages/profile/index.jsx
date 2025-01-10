@@ -4,7 +4,6 @@ import { Avatar, Button } from "@nutui/nutui-react-taro";
 export default function Profile() {
   return (
     <View className="">
-      111
       <Button type="primary">哈哈哈哈</Button>
     </View>
   );

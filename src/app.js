@@ -1,7 +1,6 @@
 
 import { useLaunch } from '@tarojs/taro'
-// import '@nutui/nutui-react-taro/dist/style.css'
-
+import '@nutui/nutui-react-taro/dist/style.css'
 import './app.scss'
 import {useNavigation} from './hooks/useNavigation'
 import { useSafeInfo } from './hooks/useSystemInfo'

@@ -7,7 +7,7 @@ export default defineAppConfig({
     'pages/word/index',
     'pages/setting/index',
     'pages/word-detail/index',
-    // 'pages/word/index',
+    'pages/review/index',
   ],
   window: {
     backgroundTextStyle: 'light',
