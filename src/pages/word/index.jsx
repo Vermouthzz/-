@@ -9,17 +9,17 @@ export default function WordPage() {
 
   return (
     <View
-      className="h-screen relative"
+      className="h-screen flex flex-col"
       style={{ background: "linear-gradient(to bottom, #ff6506, #ff9f43)" }}
     >
       <CustomHeader></CustomHeader>
-      <Text className="text-white absolute top-6 left-1/2 -translate-x-1/2">
-        1/10
-      </Text>
-      <WordVerify></WordVerify>
-      <Answer></Answer>
+      <View className="flex-1 flex flex-col items-center justify-around">
+        <Text className="text-white">1/10</Text>
+        <WordVerify></WordVerify>
+        <Answer className=""></Answer>
+      </View>
       <Footer
-        style={{ height: `${safeBtm + 60}px`, paddingBottom: `${safeBtm}px` }}
+        style={{ height: `${safeBtm + 100}px`, paddingBottom: `${safeBtm}px` }}
       ></Footer>
     </View>
   );
@@ -27,11 +27,17 @@ export default function WordPage() {
 
 function Footer({ className, ...props }) {
   return (
-    <View {...props} className="flex items-center fixed bottom-0 left-0 w-full">
-      <View className="flex-1 text-center">1</View>
-      <View className="flex-1 text-center">2</View>
-      <View className="flex-1 text-center">3</View>
-      <View className="flex-1 text-center">4</View>
+    <View {...props} className="w-full">
+      <View className="flex items-center justify-center py-2 mb-4 relative">
+        看答案
+        <View className="w-3 h-1 rounded-full absolute bottom-0 left-1/2 -translate-x-1/2 bg-red-600"></View>
+      </View>
+      <View className="flex items-center">
+        <View className="flex-1 text-center">1</View>
+        <View className="flex-1 text-center">2</View>
+        <View className="flex-1 text-center">3</View>
+        <View className="flex-1 text-center">收藏</View>
+      </View>
     </View>
   );
 }
