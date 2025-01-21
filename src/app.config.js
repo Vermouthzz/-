@@ -3,12 +3,12 @@ export default defineAppConfig({
     "pages/index/index",
     "pages/interaction/index",
     "pages/profile/index",
-    "pages/login/index",
     "pages/word/index",
-    "pages/setting/index",
     "pages/word-detail/index",
     "pages/review/index",
+    "pages/search/index",
     "pages/word-listen-write/index",
+    "pages/interaction-match/index",
   ],
   window: {
     backgroundTextStyle: "light",
@@ -38,4 +38,14 @@ export default defineAppConfig({
       },
     ],
   },
+  subpackages: [
+    {
+      root: "profile_subpkg",
+      pages: [
+        "pages/login/index",
+        "pages/register/index",
+        "pages/setting/index",
+      ],
+    },
+  ],
 });

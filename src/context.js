@@ -1,4 +1,11 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 
+// const [settings, setSettings] = useState(11111);
 
-export const settingContext = createContext(null)
+export const Context = createContext(null);
+
+export const ContextValue = {
+  settings: 1,
+  //   settings,
+  //   setSettings,
+};

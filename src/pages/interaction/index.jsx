@@ -2,6 +2,7 @@ import { View } from "@tarojs/components";
 import { InteractionUser } from "./widgets/interaction-user";
 import { InteractionResult } from "./widgets/interaction-result";
 import { InteractionTopic } from "./widgets/interaction-topic";
+// import { useLoad } from "@tarojs/taro";
 
 export default function InteractionPage() {
   return (
