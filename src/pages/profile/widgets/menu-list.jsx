@@ -5,13 +5,17 @@ import Taro from "@tarojs/taro";
 export function MenuList() {
   const list = [
     {
-      name: "设置",
+      name: "单词设置",
       path: "/profile_subpkg/pages/setting/index",
     },
     {
       name: "主题",
       path: "/profile_subpkg/pages/theme/index",
     },
+    {
+      name: "用户设置",
+      path: "/profile_subpkg/pages/user-setting/index",
+    }
   ];
   return (
     <View className="flex flex-col mt-3 bg-white">

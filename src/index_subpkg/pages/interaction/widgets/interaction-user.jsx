@@ -67,7 +67,7 @@ function LeftUser() {
         ></Avatar>
         <Image
           className="w-6 h-6 absolute right-1 -top-4"
-          src={require("../../../public/image/common/winner.svg")}
+          src={require("../../../../public/image/common/winner.svg")}
         ></Image>
       </View>
     </View>
@@ -93,7 +93,7 @@ function RightUser() {
         ></Avatar>
         <Image
           className="w-6 h-6 absolute -top-4 left-1"
-          src={require("../../../public/image/common/winner.svg")}
+          src={require("../../../../public/image/common/winner.svg")}
         ></Image>
       </View>
     </View>

@@ -1,10 +1,10 @@
 import { View } from "@tarojs/components";
-import { SettingItem } from "../components/setting-item";
+import { CommonLine } from "../../../components/common-line";
 
 export function DaySetting() {
   return (
     <View>
-      <SettingItem text="每日任务"></SettingItem>
+      <CommonLine text="每日任务"></CommonLine>
     </View>
   );
 }

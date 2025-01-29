@@ -18,8 +18,14 @@ export default function Login() {
     const res = await login({ account, password });
     if (res.code === 200) {
       Taro.setStorageSync("token", res.data.token);
-      Taro.setStorageSync("userInfo", res.data.userInfo);
-      Taro.switchTab({ url: "/pages/profile/index" });
+      Taro.setStorageSync("userInfo", res.data.userinfo);
+      Taro.showToast({
+        title: "登陆成功",
+        icon: "none",
+      });
+      setTimeout(() => {
+        Taro.switchTab({ url: "/pages/profile/index" });
+      }, 500);
     }
   }, [userInfo.account, userInfo.password]);
 

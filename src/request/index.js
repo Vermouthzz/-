@@ -1,18 +1,21 @@
 import Taro from "../../node_modules/@tarojs/taro";
-const baseUrl = "http://localhost:7001";
+const baseUrl = "http://localhost:3000";
 const request = ({ url, method = "GET", data = {} }) => {
   return new Promise((resolve, reject) => {
     Taro.request({
       url: baseUrl + url,
-      method: method,
-      data: data,
+      method,
+      data,
       success: (res) => {
         resolve(res.data);
       },
+      fail: (err) => {
+        console.log(err);
+      }
     });
   });
 };
-console.log(Taro);
+
 
 const requestInterceptor = (chain) => {
   const requestParams = chain.requestParams;
@@ -39,7 +42,7 @@ const resonseInterceptor = (chain) => {
   });
 };
 
-Taro.addInterceptor(requestInterceptor);
-Taro.addInterceptor(resonseInterceptor);
+// Taro.addInterceptor(requestInterceptor);
+// Taro.addInterceptor(resonseInterceptor);
 
 export default request;

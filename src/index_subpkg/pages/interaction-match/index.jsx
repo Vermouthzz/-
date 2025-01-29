@@ -1,40 +1,36 @@
 import { Avatar } from "@nutui/nutui-react-taro";
 import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useUnload } from "@tarojs/taro";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import "./index.scss";
+import { Context } from "../../../context";
 export default function MatchPage() {
+  const { setSocket } = useContext(Context);
   const [isMatch, setIsMatch] = useState(false);
   const [otherUser, setOtherUser] = useState(null);
   const socketTask = useRef(null);
   useLoad(async () => {
     socketTask.current = await Taro.connectSocket({
-      url: "ws://localhost:3000/ws",
+      url: "ws://localhost:3000/ws?token=" + Taro.getStorageSync("token"),
     });
-    // .then((task) => {
-    //   task.onMessage((data) => {
-    //     const res = JSON.parse(data);
-    //     if (res.type === "start") {
-    //       setIsMatch(true);
-    //       setOtherUser(res.data.userinfo);
-    //     }
-    //   });
-    //   task.onOpen(() => {
-    //     handleJoin(task);
-    //   });
-    //   task.onError(() => {
-    //     console.log("连接失败");
-    //   });
-    // });
+    if (socketTask.current) {
+      setSocket(socketTask.current);
+    }
   });
 
   useEffect(() => {
     if (socketTask.current) {
       socketTask.current.onMessage((data) => {
-        const res = JSON.parse(data);
+        console.log("收到服务器内容：", data);
+        const res = JSON.parse(data.data);
         if (res.type === "start") {
           setIsMatch(true);
-          setOtherUser(res.data.userinfo);
+          // setOtherUser(res.data.userinfo);
+          setTimeout(() => {
+            Taro.redirectTo({
+              url: "/index_subpkg/pages/interaction/index",
+            });
+          }, 500);
         }
       });
       socketTask.current.onOpen(() => {
@@ -43,6 +39,9 @@ export default function MatchPage() {
       socketTask.current.onError(() => {
         console.log("连接失败");
       });
+      socketTask.current.onClose(() => {
+        console.log("连接关闭");
+      });
     }
   }, [socketTask.current]);
 
@@ -50,14 +49,13 @@ export default function MatchPage() {
     const data = {
       token: 111,
       type: "join",
-      userInfo: {
-        avatar: "111",
-      },
     };
+    console.log("发送");
+
     socketTask.current.send({ data: JSON.stringify(data) });
   }
   useUnload(() => {
-    if (socketTask.current.readyState === 1) {
+    if (socketTask.current.readyState === 1 && !isMatch) {
       Taro.closeSocket();
     }
   });
@@ -92,7 +90,7 @@ function Middle() {
     <View className="h-full flex flex-col justify-center items-center">
       <Image
         className="w-20 -mt-20"
-        src={require("../../public/image/common/vs.svg")}
+        src={require("../../../public/image/common/vs.svg")}
       ></Image>
     </View>
   );

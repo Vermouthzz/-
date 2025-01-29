@@ -1,12 +1,13 @@
 import { View } from "@tarojs/components";
-import { SettingItem } from "../components/setting-item";
+import { CommonLine } from "../../../components/common-line";
+
 import { clsx } from "clsx";
 
 export function ReviewSetting({ className }) {
   return (
     <View className={clsx(className)}>
-      <SettingItem text="复习时重复次数"></SettingItem>
-      <SettingItem text="复习时重复次数"></SettingItem>
+      <CommonLine text="复习时重复次数"></CommonLine>
+      <CommonLine text="复习时重复次数"></CommonLine>
     </View>
   );
 }

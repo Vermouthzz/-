@@ -6,6 +6,7 @@ import { useNavigation } from "./hooks/useNavigation";
 import { useSafeInfo } from "./hooks/useSystemInfo";
 import { Context, ContextValue } from "./context";
 import Taro from "@tarojs/taro";
+import { useState } from "react";
 
 function App({ children }) {
   useLaunch(() => {
@@ -14,10 +15,11 @@ function App({ children }) {
     Taro.token = Taro.getStorageSync("token");
   });
 
+  const [socket, setSocket] = useState(null);
   // const [userInfo, setUserInfo] = useState(null);
 
   // children 是将要会渲染的页面
-  return <Context.Provider value={ContextValue}>{children}</Context.Provider>;
+  return <Context.Provider value={{ socket, setSocket }}>{children}</Context.Provider>;
 }
 
 export default App;
