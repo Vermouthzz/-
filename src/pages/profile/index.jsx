@@ -1,16 +1,17 @@
 import { View, Text } from "@tarojs/components";
 import { Avatar } from "@nutui/nutui-react-taro";
 import { MenuList } from "./widgets/menu-list";
-import Taro, { useLoad } from "@tarojs/taro";
+import Taro, { useDidShow, useLoad } from "@tarojs/taro";
 import { useEffect, useState } from "react";
+
 
 export default function Profile() {
   const [userInfo, setUserInfo] = useState({});
 
-  useEffect(() => {
+  useDidShow(() => {
     const info = Taro.getStorageSync("userInfo");
-    if (info) {
-      setUserInfo((prev) => ({ ...prev, ...info }));
+    if (info && JSON.stringify(info) !== JSON.stringify(userInfo)) {
+      setUserInfo(info);
     }
   });
   return (
@@ -21,19 +22,20 @@ export default function Profile() {
   );
 }
 
-function ProfileTop({ info }) {
+function ProfileTop({ info = {} }) {
+  const isLogin = Object.keys(info).length > 0;
   console.log(info);
   
-  return Object.keys(info).length ? (
+  return isLogin ? (
     <View className="h-44 bg-slate-500 flex flex-col justify-center items-center gap-3">
       <Avatar size="large" src={info.avatar}></Avatar>
-      <Text className="text-white text-base">{info.user_name}</Text>
+      <View className="text-white text-base">{info.user_name}</View>
     </View>
   ) : (
     <View className="h-44 bg-slate-500 flex flex-col justify-center items-center gap-3">
       <Avatar
         size="large"
-        src="https://img.cdn.sugarat.top/mdImg/MTY3MDMwNjMxNjY3OA==6401786316670.png"
+        src="http://127.0.0.1:3000/app/public/upload/avatar/1738219150649_k3130DnDjamKc1a10bbf0f9924dce991afc09698dcf0.jpg"
       ></Avatar>
       <Text
         onClick={() => {

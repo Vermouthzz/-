@@ -42,3 +42,6 @@ compiler: {
 ```
 send方法发送为：{data: 'xxx'}
 ```
+
+
+## 主题配置

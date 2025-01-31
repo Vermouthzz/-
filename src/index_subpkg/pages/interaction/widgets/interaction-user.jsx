@@ -2,47 +2,29 @@ import { Avatar, CircleProgress } from "@nutui/nutui-react-taro";
 import { Text, View, Image } from "@tarojs/components";
 import { useEffect, useState } from "react";
 
-export function InteractionUser() {
-  const [time, setTime] = useState(10);
-  useEffect(() => {
-    let timer =
-      time > 0 &&
-      setInterval(() => {
-        setTime((time) => time - 1);
-      }, 1000);
-
-    return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
-    };
-  }, [time]);
+export function InteractionUser({ userInfo, time, isFinish }) {
   return (
     <View className="flex justify-between">
-      <LeftUser></LeftUser>
-      <Middle time={time}></Middle>
-      <RightUser></RightUser>
-    </View>
-  );
-}
-
-function Middle({ time }) {
-  return (
-    // <View
-    //   className="text-3xl mt-7 text-[#FFE66C] font-semibold"
-    //   style={{ textShadow: "0 0 0.2em #8F7" }}
-    // >
-    //   胜利
-    // </View>
-
-    <View className="mt-7">
-      <CircleProgress
-        percent={10}
-        radius={25}
-        className="bg-green-300 rounded-full"
-      >
-        <Text className="text-white font-semibold text-lg">{time}</Text>
-      </CircleProgress>
+      <LeftUser info={userInfo.myInfo}></LeftUser>
+      {isFinish ? (
+        <View className="mt-7">
+          <CircleProgress
+            percent={10}
+            radius={25}
+            className="bg-green-300 rounded-full"
+          >
+            <Text className="text-white font-semibold text-lg">{time}</Text>
+          </CircleProgress>
+        </View>
+      ) : (
+        <View
+          className="text-3xl mt-7 text-[#FFE66C] font-semibold"
+          style={{ textShadow: "0 0 0.2em #8F7" }}
+        >
+          {userInfo.myInfo.is_winner ? "胜利" : "失败"}
+        </View>
+      )}
+      <RightUser info={userInfo.otherInfo}></RightUser>
     </View>
   );
 }
@@ -53,22 +35,20 @@ const leftStyle = {
   borderTop: "70rpx solid #54A3FC",
   borderRight: "70rpx solid transparent",
 };
-function LeftUser() {
+function LeftUser({ info }) {
   return (
     <View style={leftStyle} className="relative mt-6">
       <Text className="absolute text-white text-2xl font-semibold -top-8 left-14">
         824
       </Text>
       <View className="absolute -top-12 left-5">
-        <Avatar
-          className=""
-          size="small"
-          src="https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png"
-        ></Avatar>
-        <Image
-          className="w-6 h-6 absolute right-1 -top-4"
-          src={require("../../../../public/image/common/winner.svg")}
-        ></Image>
+        <Avatar className="" size="small" src={info.avatar}></Avatar>
+        {info.is_winner ? (
+          <Image
+            className="w-6 h-6 absolute right-1 -top-4"
+            src={require("../../../../public/image/common/winner.svg")}
+          ></Image>
+        ) : null}
       </View>
     </View>
   );
@@ -79,22 +59,20 @@ const rightStyle = {
   borderBottom: "70rpx solid #FF7B83",
   borderLeft: "70rpx solid transparent",
 };
-function RightUser() {
+function RightUser({ info }) {
   return (
     <View style={rightStyle} className="relative mt-8">
       <Text className="absolute top-0.5 right-14 text-2xl font-semibold text-white">
         899
       </Text>
       <View className="absolute -top-3 right-5">
-        <Avatar
-          className=""
-          size="small"
-          src="https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png"
-        ></Avatar>
-        <Image
-          className="w-6 h-6 absolute -top-4 left-1"
-          src={require("../../../../public/image/common/winner.svg")}
-        ></Image>
+        <Avatar className="" size="small" src={info.avatar}></Avatar>
+        {info.is_winner ? (
+          <Image
+            className="w-6 h-6 absolute -top-4 left-1"
+            src={require("../../../../public/image/common/winner.svg")}
+          ></Image>
+        ) : null}
       </View>
     </View>
   );

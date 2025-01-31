@@ -1,5 +1,7 @@
 import Taro from "../../node_modules/@tarojs/taro";
 const baseUrl = "http://localhost:3000";
+// const baseUrl = "http://192.168.185.138:3000";
+
 const request = ({ url, method = "GET", data = {} }) => {
   return new Promise((resolve, reject) => {
     Taro.request({
