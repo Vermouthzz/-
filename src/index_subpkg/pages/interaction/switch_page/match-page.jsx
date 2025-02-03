@@ -1,10 +1,16 @@
-export function MatchPage() {
+import "../index.scss";
+import { View, Image } from "@tarojs/components";
+import { Avatar } from "@nutui/nutui-react-taro";
+import { useState, useEffect, useContext } from "react";
+import { Context } from "../context";
+import Taro from "@tarojs/taro";
+export function MatchPage({ isMatch }) {
   return (
     <View className="flex h-screen relative bg-[#789765]">
       {isMatch ? <MatchResult /> : <MatchLoading />}
       <LeftUser />
       <Middle />
-      <RightUser otherUser={otherUser} />
+      <RightUser />
     </View>
   );
 }
@@ -30,7 +36,7 @@ function Middle() {
     <View className="h-full flex flex-col justify-center items-center">
       <Image
         className="w-20 -mt-20"
-        src={require("../../../public/image/common/vs.svg")}
+        src={require("../../../../public/image/common/vs.svg")}
       ></Image>
     </View>
   );
@@ -49,10 +55,15 @@ function LeftUser() {
   );
 }
 
-function RightUser({ otherUser }) {
+function RightUser() {
+  const {
+    allUserInfo: { otherInfo },
+  } = useContext(Context);
+  console.log(otherInfo, "----------------");
+
   return (
     <View className="h-full flex-1 flex flex-col justify-center items-center">
-      <Avatar className="w-24 h-24" src={otherUser.avatar}></Avatar>
+      <Avatar className="w-24 h-24" src={otherInfo?.avatar || ""}></Avatar>
     </View>
   );
 }

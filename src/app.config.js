@@ -51,7 +51,6 @@ export default defineAppConfig({
       root: "index_subpkg",
       pages: [
         "pages/interaction/index",
-        "pages/interaction-match/index",
       ]
     }
   ],

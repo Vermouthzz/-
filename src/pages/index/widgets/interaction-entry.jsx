@@ -5,7 +5,7 @@ import Taro from "@tarojs/taro";
 export function InteractionEntry(props) {
   const toInteractionMatch = () => {
     Taro.navigateTo({
-      url: "/index_subpkg/pages/interaction-match/index",
+      url: "/index_subpkg/pages/interaction/index",
     });
   };
   return (
