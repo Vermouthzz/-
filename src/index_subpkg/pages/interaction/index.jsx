@@ -29,9 +29,7 @@ export default function Page() {
   }); // 对战是否结束
 
   const [question, setQuestion] = useState({}); // 问题
-
   const [time, setTime] = useState(10); // 时间
-
   const game_id = useRef(null); // 游戏id
 
   const [replyInfo, setReplyInfo] = useState({
@@ -73,16 +71,25 @@ export default function Page() {
   };
 
   useLoad(() => {
-    const token = "Bearer " + Taro.getStorageSync("token");
+    const token = Taro.getStorageSync("token");
     Taro.connectSocket({
       url: "ws://localhost:3000/ws?token=" + token,
     });
 
+    function sendHeartMsg() {
+      setTimeout(() => {
+        Taro.sendSocketMessage({
+          data: JSON.stringify({ type: "heart" }),
+        });
+        sendHeartMsg();
+      }, 5000);
+    }
+
     Taro.onSocketOpen(() => {
-      console.log("socket opened");
       Taro.sendSocketMessage({
         data: JSON.stringify({ type: "join" }),
       });
+      sendHeartMsg();
     });
 
     Taro.onSocketMessage((res) => {
@@ -123,9 +130,7 @@ export default function Page() {
       }
     });
 
-    Taro.onSocketClose(() => {
-      console.log("socket closed");
-    });
+    Taro.onSocketClose(() => {});
 
     Taro.onSocketError((e) => {
       console.log("socket error", e);

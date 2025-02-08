@@ -23,3 +23,10 @@ export const register = (params) => {
     data: params,
   });
 };
+
+export const refreshAccessToken = () => {
+  return request({
+    url: "/user/refresh",
+    method: "get",
+  });
+}

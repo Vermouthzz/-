@@ -1,17 +1,15 @@
-import { createContext, useEffect, useState } from "react";
-
+import { createContext, useEffect, useReducer, useState } from "react";
+import { settingReducer, initialState } from './hooks/settingReducer'
 
 
 export const Context = createContext(null);
 
 export const ContextProvider = ({ children }) => {
-  const [settingVal, setSettingVal] = useState({
-
-  })
+  const [settingState, setSettingState] = useReducer(settingReducer, initialState)
 
   const ContextValue = {
-    settingVal,
-    setSettingVal
+    settingState,
+    setSettingState
   }
   return (
     <Context.Provider value={ContextValue}>

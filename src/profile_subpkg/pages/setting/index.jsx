@@ -3,46 +3,38 @@ import { WordSetting } from "./widgets/word-setting";
 import { StudySetting } from "./widgets/study-setting";
 import { ReviewSetting } from "./widgets/review-setting";
 import { DaySetting } from "./widgets/day-setting";
-import { useLoad } from "@tarojs/taro";
+import { useLoad, useUnload } from "@tarojs/taro";
 import { useContext, useState } from "react";
 import { Context } from "../../../context";
 import Taro from "@tarojs/taro";
 
 export default function Setting() {
-  const [setting, setSetting] = useState({
-    "word-setting": [{ text: "", value: "1" }],
-    "study-setting": [],
-    "review-setting": [],
-    "day-setting": [],
-  });
-  const { settings } = useContext(Context);
+  const { settingState, setSettingState } = useContext(Context);
 
   useLoad(() => {
-    const storgeSetting = Taro.getStorageSync("setting");
-    if (storgeSetting) {
-      const settingParse = JSON.parse(storgeSetting);
-      setSetting(settingParse);
-    } else {
-      Taro.setStorageSync("setting", JSON.stringify(setting));
-    }
+    const setting = Taro.getStorageSync("settingState");
+    // if(setting) {}
+  });
+  useUnload(() => {
+    // Taro.setStorageSync("settingState", settingState);
   });
   return (
     <View className="h-screen">
       <View className="bg-[#F8F8F8]">
         <WordSetting
-          list={setting["word-setting"]}
+          list={settingState["wordSetting"]}
           className="mb-2"
         ></WordSetting>
 
         <StudySetting
-          list={setting["study-setting"]}
+          list={settingState["studySetting"]}
           className="mb-2"
         ></StudySetting>
         <ReviewSetting
-          list={setting["review-setting"]}
+          list={settingState["reviewSetting"]}
           className="mb-2"
         ></ReviewSetting>
-        <DaySetting list={setting["day-setting"]}></DaySetting>
+        <DaySetting list={settingState["daySetting"]}></DaySetting>
       </View>
     </View>
   );

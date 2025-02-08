@@ -44,7 +44,8 @@ export default defineAppConfig({
         "pages/register/index",
         "pages/setting/index",
         "pages/theme/index",
-        "pages/user-setting/index"
+        "pages/user-setting/index",
+        "pages/cooper/index"
       ],
     },
     {

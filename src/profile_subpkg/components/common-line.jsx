@@ -7,6 +7,8 @@ export function CommonLine({
   callback,
   children,
 }) {
+  console.log(children);
+
   return (
     <View
       onClick={callback}

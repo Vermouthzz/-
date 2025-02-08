@@ -19,6 +19,7 @@ export default function Login() {
     if (res.code === 200) {
       Taro.setStorageSync("token", res.data.token);
       Taro.setStorageSync("userInfo", res.data.userinfo);
+      Taro.setStorageSync("refreshToken", res.data.refreshToken);
       Taro.showToast({
         title: "登陆成功",
         icon: "none",
