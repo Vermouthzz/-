@@ -5,13 +5,13 @@ import { WordBook } from "./widgets/word-book";
 import { DayTask } from "./widgets/day-task";
 import { InteractionEntry } from "./widgets/interaction-entry";
 import { getInteractionInfo } from "../../api/interaction";
-import { useState } from "react";
-export default function Index() {
-  const [interactionInfo, setInteractionInfo] = useState({
-    total_count: 0,
-    total_win: 0,
-    win_rate: 0,
-  });
+import { useContext, useState } from "react";
+import { Context, withContext } from "./context";
+
+export default withContext(Index);
+
+function Index() {
+  const { setInteractionInfo } = useContext(Context);
   const getInteraction = async () => {
     const res = await getInteractionInfo();
     console.log(res);
@@ -27,7 +27,7 @@ export default function Index() {
   return (
     <View className="flex flex-col gap-6">
       <WordBook></WordBook>
-      <InteractionEntry info={interactionInfo}></InteractionEntry>
+      <InteractionEntry></InteractionEntry>
       <DayTask></DayTask>
     </View>
   );

@@ -1,9 +1,10 @@
 import { Button, Text, View } from "@tarojs/components";
 import { Card } from "../components/card";
 import Taro from "@tarojs/taro";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { Context } from "../context";
 
-export function InteractionEntry({info}) {
+export function InteractionEntry({}) {
   const toInteractionMatch = () => {
     Taro.navigateTo({
       url: "/index_subpkg/pages/interaction/index",
@@ -30,13 +31,14 @@ export function InteractionEntry({info}) {
 }
 
 function EntryRight({}) {
+  const { interactionInfo } = useContext(Context);
   const [list, setList] = useState([
     { text: "累计pk数", value: 0, type: "total_count" },
     { text: "累计胜场", value: 0, type: "win_count" },
     { text: "pk胜率", value: "0%", type: "win_rate" },
   ]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {}, [interactionInfo]);
   return (
     <View className="felx gap-3 flex-wrap">
       {list.map((item) => (

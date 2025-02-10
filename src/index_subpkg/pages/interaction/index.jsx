@@ -82,7 +82,7 @@ export default function Page() {
           data: JSON.stringify({ type: "heart" }),
         });
         sendHeartMsg();
-      }, 5000);
+      }, 10000);
     }
 
     Taro.onSocketOpen(() => {
@@ -118,7 +118,6 @@ export default function Page() {
         setTime(data.time);
       } else if (data.type === "result") {
         console.log(data, "结果");
-
         if (data.answered) {
           setReplyInfo((prev) => ({
             ...prev,

@@ -43,5 +43,9 @@ compiler: {
 send方法发送为：{data: 'xxx'}
 ```
 
-
 ## 主题配置
+
+## 图片裁剪
+
+touchStart: 记录开始位置。
+touchMove：每次移动时，根据 clientX 算移动距离，根据正负判断增加减少。（注意：每次移动时，更新 startInfo 的 clientX）

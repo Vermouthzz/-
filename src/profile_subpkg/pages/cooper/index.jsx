@@ -3,6 +3,8 @@ import { Canvas, Image, View } from "@tarojs/components";
 import Taro, { useLoad, useReady } from "@tarojs/taro";
 import { useEffect, useRef, useState } from "react";
 import "./index.scss";
+import { TouchBlock } from "./components/touch-block";
+import { TouchLine } from "./components/touch-line";
 
 export default function ImgClip() {
   const sysInfo = useRef(null);
@@ -24,6 +26,7 @@ export default function ImgClip() {
     height: 200, // 裁剪框高度
     top: 0, // 裁剪框顶部位置
     left: 0, // 裁剪框左侧位置
+    minScale: 160,
   });
   const [scale, setScale] = useState(1); // 缩放比例
 
@@ -80,7 +83,8 @@ export default function ImgClip() {
 
   useEffect(() => {
     if (ImgInfo.path) {
-      console.log(ImgInfo.width, ImgInfo.height);
+      console.log("重绘");
+
       ctx.current.drawImage(
         ImgInfo.path,
         0,
@@ -93,6 +97,8 @@ export default function ImgClip() {
   }, [ctx.current]);
 
   useLoad((options) => {
+    console.log("执行顺序", options.path);
+
     const { path } = options;
     sysInfo.current = Taro.getSystemInfoSync();
 
@@ -129,6 +135,102 @@ export default function ImgClip() {
     });
   });
 
+  const touchStartFn = (e) => {
+    e.stopPropagation();
+    const { clientX, clientY } = e.touches[0];
+    startInfo.current[0] = {
+      clientX,
+      clientY,
+      initialWidth: cropBoxStyle.width,
+      initialHeight: cropBoxStyle.height,
+      initialLeft: cropBoxStyle.left,
+      initialTop: cropBoxStyle.top,
+    };
+  };
+
+  const touchMoveFn = (e) => {
+    const { clientX, clientY } = e.touches[0];
+    console.log(
+      clientX,
+      clientY,
+      startInfo.current[0].clientX,
+      startInfo.current[0].clientY
+    );
+
+    const move = Math.abs(clientX - startInfo.current[0].clientX);
+    let left, top, size;
+    if (clientX - startInfo.current[0].clientX < 0) {
+      size = move + cropBoxStyle.width;
+      left = cropBoxStyle.left - move >= 0 ? cropBoxStyle.left - move : 0;
+      top = cropBoxStyle.top - move >= 0 ? cropBoxStyle.top - move : 0;
+    } else {
+      size = cropBoxStyle.width - move;
+      left = cropBoxStyle.left + move;
+      top = cropBoxStyle.top + move;
+    }
+
+    if (size <= cropBoxStyle.minScale || size > sysInfo.current.screenWidth)
+      return;
+
+    if (left >= 0 && top >= 0) {
+      requestAnimationFrame(() => {
+        startInfo.current[0] = {
+          ...startInfo.current[0],
+          clientX,
+          clientY,
+        };
+        setCropBoxStyle((prev) => ({
+          ...prev,
+          width: size,
+          height: size,
+          left,
+          top,
+        }));
+      });
+    }
+  };
+
+  const lineMove = (e) => {
+    console.log(e.touches[0], startInfo.current[0]);
+
+    const { clientX, clientY } = e.touches[0];
+    const move = clientX - startInfo.current[0].clientX;
+    let left, size;
+    if (move < 0) {
+      size = cropBoxStyle.width + Math.abs(move);
+      left =
+        cropBoxStyle.left - Math.abs(move) >= 0
+          ? cropBoxStyle.left - Math.abs(move)
+          : 0;
+    } else {
+      size = cropBoxStyle.width - move;
+      left = cropBoxStyle.left + move;
+    }
+    if (size <= cropBoxStyle.minScale || size > sysInfo.current.screenWidth)
+      return;
+    if (left >= 0 && startInfo.current[0].can_change) {
+      requestAnimationFrame(() => {
+        startInfo.current[0] = {
+          ...startInfo.current[0],
+          clientX,
+        };
+        setCropBoxStyle((prev) => {
+          if (prev.left === 0) {
+            size = prev.width;
+          }
+          if (prev.top === 0) {
+            size = prev.height;
+          }
+          return {
+            ...prev,
+            width: size,
+            left,
+          };
+        });
+      });
+    }
+  };
+
   return (
     <View
       className="h-screen w-screen relative z-50 touch-none"
@@ -156,6 +258,9 @@ export default function ImgClip() {
           transform: `translate(${cropBoxStyle.left}px, ${cropBoxStyle.top}px)`,
         }}
         className="absolute"
+        onTouchMove={(e) => {
+          // console.log(e, "事件委托");
+        }}
         ref={moveParent}
       >
         <View className="w-full h-full relative overflow-hidden outline outline-1 block outline-[#39f] ">
@@ -192,42 +297,36 @@ export default function ImgClip() {
           className=" bg-white opacity-10 absolute left-0 top-0 w-full h-full"
         ></View>
         {/* 线 */}
-        <View
-          onTouchMove={(e) => {
-            console.log(111, e);
-          }}
-          className="line-border w-full h-[2rpx] left-0 top-0"
-        ></View>
-        <View className="line-border w-full h-[2rpx] left-0 bottom-0 "></View>
-        <View className="line-border h-full w-[2rpx] left-0 top-0"></View>
-        <View className="line-border h-full w-[2rpx] right-0 top-0"></View>
-        {/* 角 */}
-        <View
-          onTouchMove={(e) => {
-            const { clientX, clientY } = e.touches[0];
-            const move = startInfo.current.clientX - clientX;
-            console.log(move);
-            setCropBoxStyle((prev) => ({
-              ...prev,
-              width: prev.width + move,
-              height: prev.height + move,
-              left: prev.left - move / 2,
-              top: prev.top - move / 2,
-            }));
-          }}
-          onTouchStart={(e) => {
-            const { clientX, clientY } = e.touches[0];
-            startInfo.current[0] = {
-              clientX,
-              clientY,
-            };
-            console.log(startInfo.current[0]);
-          }}
-          className="line-border w-[16rpx] h-[16rpx] left-0 top-0 z-[52]"
-        ></View>
-        <View className="line-border w-[16rpx] h-[16rpx] left-0 bottom-0 z-[52]"></View>
-        <View className="line-border w-[16rpx] h-[16rpx] right-0 top-0 z-[52]"></View>
-        <View className="line-border w-[16rpx] h-[16rpx] right-0 bottom-0 z-[52]"></View>
+        <TouchLine className={"w-full h-[2rpx] left-0 top-0"}></TouchLine>
+        <TouchLine className=" w-full h-[2rpx] left-0 bottom-0"></TouchLine>
+        <TouchLine
+          startCallback={touchStartFn}
+          moveCallback={lineMove}
+          className="h-full w-[4rpx] left-0 top-0"
+        ></TouchLine>
+        <TouchLine className="h-full w-[2rpx] right-0 top-0"></TouchLine>
+        {/* 左上角 */}
+        <TouchBlock
+          className="left-0 top-0"
+          startCallback={touchStartFn}
+          moveCallback={touchMoveFn}
+        ></TouchBlock>
+        {/* 左下角 */}
+        <TouchBlock
+          className="left-0 bottom-0"
+          startCallback={touchStartFn}
+          moveCallback={touchMoveFn}
+        ></TouchBlock>
+        <TouchBlock
+          className="right-0 bottom-0"
+          startCallback={touchStartFn}
+          moveCallback={touchMoveFn}
+        ></TouchBlock>
+        <TouchBlock
+          className="right-0 top-0"
+          startCallback={touchStartFn}
+          moveCallback={touchMoveFn}
+        ></TouchBlock>
       </View>
 
       <Button
