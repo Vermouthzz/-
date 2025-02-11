@@ -37,6 +37,8 @@ export default function Page() {
     isReply: false,
   }); // 回答信息
 
+  const [isClose, setIsClose] = useState(false); //主动断开链接
+
   const reSetGeme = () => {
     setFinishInfo({
       isFinished: false,
@@ -129,7 +131,11 @@ export default function Page() {
       }
     });
 
-    Taro.onSocketClose(() => {});
+    Taro.onSocketClose(() => {
+      console.log("socket close");
+      if (!isClose) {
+      }
+    });
 
     Taro.onSocketError((e) => {
       console.log("socket error", e);
@@ -138,10 +144,25 @@ export default function Page() {
     Taro.enableAlertBeforeUnload({
       message: "您确定要离开当前对战吗?",
       success: function (res) {
-        // socket.current.close();
+        setIsClose(true);
+        Taro.closeSocket();
       },
     });
   });
+
+  const reConnectSocket = () => {
+    const token = Taro.getStorageSync("token");
+    Taro.connectSocket({
+      url: "ws://localhost:3000/ws?token=" + token,
+      fail: (e) => {
+        if (reConnectCount) {
+          setTimeout(() => {
+            reConnectSocket();
+          }, 10000);
+        }
+      },
+    });
+  };
 
   const ContextValue = {
     replyInfo,

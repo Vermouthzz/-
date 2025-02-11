@@ -8,8 +8,6 @@ import { TouchLine } from "./components/touch-line";
 
 export default function ImgClip() {
   const sysInfo = useRef(null);
-  const moveParent = useRef(null);
-  const moveItem = useRef(null);
   const [ImgInfo, setImgInfo] = useState({
     //图片信息
     path: "",
@@ -29,6 +27,7 @@ export default function ImgClip() {
     minScale: 160,
   });
   const [scale, setScale] = useState(1); // 缩放比例
+  const [direction, setDirection] = useState("move"); // 移动方向
 
   const handleTouchMove = (e) => {
     if (e.touches.length === 1) {
@@ -83,8 +82,6 @@ export default function ImgClip() {
 
   useEffect(() => {
     if (ImgInfo.path) {
-      console.log("重绘");
-
       ctx.current.drawImage(
         ImgInfo.path,
         0,
@@ -96,9 +93,152 @@ export default function ImgClip() {
     }
   }, [ctx.current]);
 
-  useLoad((options) => {
-    console.log("执行顺序", options.path);
+  const touchStartFn = (e, type) => {
+    e.stopPropagation();
+    setDirection(type);
+    const { clientX, clientY } = e.touches[0];
+    startInfo.current[0] = {
+      clientX,
+      clientY,
+      initialWidth: cropBoxStyle.width,
+      initialHeight: cropBoxStyle.height,
+      initialLeft: cropBoxStyle.left,
+      initialTop: cropBoxStyle.top,
+    };
+  };
 
+  const handleScaleMove = (e) => {
+    if (direction === "move") {
+      handleTouchMove(e);
+      return;
+    }
+    const flag = direction.includes("-");
+    flag ? blockMove(e) : lineMove(e);
+  };
+
+  function blockMove(e) {
+    const { clientX, clientY } = e.touches[0];
+    const move = clientX - startInfo.current[0].clientX;
+    let left, top, size;
+    if (move < 0) {
+      size = -move + cropBoxStyle.width;
+      left = cropBoxStyle.left + move >= 0 ? cropBoxStyle.left + move : 0;
+      top = cropBoxStyle.top + move >= 0 ? cropBoxStyle.top + move : 0;
+    } else {
+      size = cropBoxStyle.width - move;
+      left = cropBoxStyle.left + move;
+      top = cropBoxStyle.top + move;
+    }
+
+    if (direction === "right-top" || direction === "right-bottom") {
+      left = cropBoxStyle.left;
+      size = cropBoxStyle.width + move;
+      top = cropBoxStyle.top - move;
+    }
+    if (direction === "left-bottom" || direction === "right-bottom") {
+      top = cropBoxStyle.top;
+    }
+
+    if (size <= cropBoxStyle.minScale || size > sysInfo.current.screenWidth)
+      return;
+
+    if (left >= 0 && top >= 0 && left + size <= sysInfo.current.screenWidth) {
+      requestAnimationFrame(() => {
+        startInfo.current[0] = {
+          ...startInfo.current[0],
+          clientX,
+          clientY,
+        };
+        setCropBoxStyle((prev) => {
+          if (prev.left === 0) {
+            size = prev.width;
+          }
+          if (prev.top === 0) {
+            size = prev.height;
+          }
+          if (direction === "left-bottom" || direction === "right-bottom") {
+            top = prev.top;
+          }
+          if (direction === "right-top" || direction === "right-bottom") {
+            left = prev.left;
+          }
+          return {
+            ...prev,
+            width: size,
+            height: size,
+            left,
+            top,
+          };
+        });
+      });
+    }
+  }
+
+  const lineMove = (e) => {
+    const { clientX, clientY } = e.touches[0];
+    let left, size, top;
+    if (direction === "left" || direction === "right") {
+      const move = clientX - startInfo.current[0].clientX;
+      if (move < 0) {
+        size = cropBoxStyle.width + Math.abs(move);
+        left =
+          cropBoxStyle.left - Math.abs(move) >= 0
+            ? cropBoxStyle.left - Math.abs(move)
+            : 0;
+      } else {
+        size = cropBoxStyle.width - move;
+        left = cropBoxStyle.left + move;
+      }
+      if (direction === "right") left = cropBoxStyle.left;
+    } else {
+      const move = clientY - startInfo.current[0].clientY;
+      if (move < 0) {
+        size = cropBoxStyle.height + Math.abs(move);
+        top =
+          cropBoxStyle.top - Math.abs(move) >= 0
+            ? cropBoxStyle.top - Math.abs(move)
+            : 0;
+      } else {
+        size = cropBoxStyle.height - move;
+        top = cropBoxStyle.top + move;
+      }
+    }
+
+    if (size <= cropBoxStyle.minScale || size > sysInfo.current.screenWidth)
+      return;
+    if (left >= 0 || top >= 0) {
+      requestAnimationFrame(() => {
+        startInfo.current[0] = {
+          ...startInfo.current[0],
+          clientX,
+        };
+        setCropBoxStyle((prev) => {
+          if (prev.left === 0) {
+            size = prev.width;
+          }
+          if (direction === "left" || direction === "right") {
+            return {
+              ...prev,
+              width: size,
+              left,
+            };
+          } else {
+            return {
+              ...prev,
+              height: size,
+              top,
+            };
+          }
+        });
+      });
+    }
+  };
+
+  const moveStart = () => {
+    setDirection("move");
+  };
+
+  useLoad((options) => {
     const { path } = options;
     sysInfo.current = Taro.getSystemInfoSync();
 
@@ -135,109 +275,13 @@ export default function ImgClip() {
     });
   });
 
-  const touchStartFn = (e) => {
-    e.stopPropagation();
-    const { clientX, clientY } = e.touches[0];
-    startInfo.current[0] = {
-      clientX,
-      clientY,
-      initialWidth: cropBoxStyle.width,
-      initialHeight: cropBoxStyle.height,
-      initialLeft: cropBoxStyle.left,
-      initialTop: cropBoxStyle.top,
-    };
-  };
-
-  const touchMoveFn = (e) => {
-    const { clientX, clientY } = e.touches[0];
-    console.log(
-      clientX,
-      clientY,
-      startInfo.current[0].clientX,
-      startInfo.current[0].clientY
-    );
-
-    const move = Math.abs(clientX - startInfo.current[0].clientX);
-    let left, top, size;
-    if (clientX - startInfo.current[0].clientX < 0) {
-      size = move + cropBoxStyle.width;
-      left = cropBoxStyle.left - move >= 0 ? cropBoxStyle.left - move : 0;
-      top = cropBoxStyle.top - move >= 0 ? cropBoxStyle.top - move : 0;
-    } else {
-      size = cropBoxStyle.width - move;
-      left = cropBoxStyle.left + move;
-      top = cropBoxStyle.top + move;
-    }
-
-    if (size <= cropBoxStyle.minScale || size > sysInfo.current.screenWidth)
-      return;
-
-    if (left >= 0 && top >= 0) {
-      requestAnimationFrame(() => {
-        startInfo.current[0] = {
-          ...startInfo.current[0],
-          clientX,
-          clientY,
-        };
-        setCropBoxStyle((prev) => ({
-          ...prev,
-          width: size,
-          height: size,
-          left,
-          top,
-        }));
-      });
-    }
-  };
-
-  const lineMove = (e) => {
-    console.log(e.touches[0], startInfo.current[0]);
-
-    const { clientX, clientY } = e.touches[0];
-    const move = clientX - startInfo.current[0].clientX;
-    let left, size;
-    if (move < 0) {
-      size = cropBoxStyle.width + Math.abs(move);
-      left =
-        cropBoxStyle.left - Math.abs(move) >= 0
-          ? cropBoxStyle.left - Math.abs(move)
-          : 0;
-    } else {
-      size = cropBoxStyle.width - move;
-      left = cropBoxStyle.left + move;
-    }
-    if (size <= cropBoxStyle.minScale || size > sysInfo.current.screenWidth)
-      return;
-    if (left >= 0 && startInfo.current[0].can_change) {
-      requestAnimationFrame(() => {
-        startInfo.current[0] = {
-          ...startInfo.current[0],
-          clientX,
-        };
-        setCropBoxStyle((prev) => {
-          if (prev.left === 0) {
-            size = prev.width;
-          }
-          if (prev.top === 0) {
-            size = prev.height;
-          }
-          return {
-            ...prev,
-            width: size,
-            left,
-          };
-        });
-      });
-    }
-  };
-
   return (
     <View
       className="h-screen w-screen relative z-50 touch-none"
       // catchMove
     >
       <View className="absolute overflow-hidden left-0 top-0 w-full h-full">
-        <Image
+        {/* <Image
           className="absolute"
           style={{
             width: ImgInfo.displayWidth,
@@ -246,7 +290,19 @@ export default function ImgClip() {
             top: ImgInfo.top,
           }}
           src={ImgInfo?.path}
-        ></Image>
+        ></Image> */}
+        <Canvas
+          className="absolute"
+          style={{
+            width: ImgInfo.width,
+            height: ImgInfo.height,
+            left: ImgInfo.left,
+            top: ImgInfo.top,
+          }}
+          width={ImgInfo.width}
+          height={ImgInfo.height}
+          canvasId="myCanvas"
+        ></Canvas>
       </View>
       {/* 遮罩层 */}
       <View className="bg-[#000] opacity-50 w-full h-full absolute left-0 top-0"></View>
@@ -258,13 +314,10 @@ export default function ImgClip() {
           transform: `translate(${cropBoxStyle.left}px, ${cropBoxStyle.top}px)`,
         }}
         className="absolute"
-        onTouchMove={(e) => {
-          // console.log(e, "事件委托");
-        }}
-        ref={moveParent}
+        onTouchMove={handleScaleMove}
       >
         <View className="w-full h-full relative overflow-hidden outline outline-1 block outline-[#39f] ">
-          <Canvas
+          <Image
             className="absolute"
             style={{
               top: ImgInfo.top,
@@ -273,66 +326,60 @@ export default function ImgClip() {
               height: ImgInfo.displayHeight,
               transform: `translate(-${cropBoxStyle.left}px, -${cropBoxStyle.top}px)`,
             }}
-            width={ImgInfo.width}
-            height={ImgInfo.height}
-            canvasId="myCanvas"
-          ></Canvas>
+            src={ImgInfo?.path}
+          ></Image>
         </View>
         <View
-          ref={moveItem}
-          onTouchStart={(e) => {
-            if (e.touches.length > 1) {
-              startInfo.current[0] = {
-                clientX: e.touches[0].clientX,
-                clientY: e.touches[0].clientY,
-              };
-              startInfo.current[1] = {
-                clientX: e.touches[1].clientX,
-                clientY: e.touches[1].clientY,
-              };
-            }
-            console.log(startInfo.current);
-          }}
-          onTouchMove={handleTouchMove}
+          onTouchStart={moveStart}
           className=" bg-white opacity-10 absolute left-0 top-0 w-full h-full"
         ></View>
         {/* 线 */}
-        <TouchLine className={"w-full h-[2rpx] left-0 top-0"}></TouchLine>
-        <TouchLine className=" w-full h-[2rpx] left-0 bottom-0"></TouchLine>
+        <TouchLine
+          type="top"
+          startCallback={touchStartFn}
+          className={"w-full h-[4rpx] left-0 top-0"}
+        ></TouchLine>
+        <TouchLine
+          type="bottom"
+          startCallback={touchStartFn}
+          className=" w-full h-[4rpx] left-0 bottom-0"
+        ></TouchLine>
         <TouchLine
           startCallback={touchStartFn}
-          moveCallback={lineMove}
+          type="left"
           className="h-full w-[4rpx] left-0 top-0"
         ></TouchLine>
-        <TouchLine className="h-full w-[2rpx] right-0 top-0"></TouchLine>
+        <TouchLine
+          type="right"
+          startCallback={touchStartFn}
+          className="h-full w-[4rpx] right-0 top-0"
+        ></TouchLine>
         {/* 左上角 */}
         <TouchBlock
           className="left-0 top-0"
+          type="left-top"
           startCallback={touchStartFn}
-          moveCallback={touchMoveFn}
         ></TouchBlock>
         {/* 左下角 */}
         <TouchBlock
+          type="left-bottom"
           className="left-0 bottom-0"
           startCallback={touchStartFn}
-          moveCallback={touchMoveFn}
         ></TouchBlock>
         <TouchBlock
+          type="right-bottom"
           className="right-0 bottom-0"
           startCallback={touchStartFn}
-          moveCallback={touchMoveFn}
         ></TouchBlock>
         <TouchBlock
+          type="right-top"
           className="right-0 top-0"
           startCallback={touchStartFn}
-          moveCallback={touchMoveFn}
         ></TouchBlock>
       </View>
-
       <Button
         onClick={() => {
           const { devicePixelRatio } = sysInfo.current;
-
           Taro.canvasToTempFilePath({
             x: cropBoxStyle.left - ImgInfo.left,
             y: cropBoxStyle.top - ImgInfo.top,
