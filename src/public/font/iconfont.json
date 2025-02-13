@@ -1,0 +1,23 @@
+{
+  "id": "4818598",
+  "name": "1111",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "3401096",
+      "name": "正确",
+      "font_class": "zhengque",
+      "unicode": "e6a6",
+      "unicode_decimal": 59046
+    },
+    {
+      "icon_id": "3401331",
+      "name": "错误",
+      "font_class": "cuowu",
+      "unicode": "e6a8",
+      "unicode_decimal": 59048
+    }
+  ]
+}

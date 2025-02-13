@@ -6,9 +6,8 @@ import prodConfig from './prod'
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig(async (merge, { command, mode }) => {
   const baseConfig = {
-    projectName: 'myApp',
-    date: '2025-1-1',
-    designWidth: 750,
+    projectName: 'apps',
+    date: '2025-1-7',
     deviceRatio: {
       640: 2.34 / 2,
       750: 1,
@@ -17,7 +16,18 @@ export default defineConfig(async (merge, { command, mode }) => {
     },
     sourceRoot: 'src',
     outputRoot: 'dist',
-    plugins: [],
+    plugins: ['@tarojs/plugin-html'],
+    designWidth (input) {
+      // 配置 NutUI 375 尺寸
+      if (input?.file?.replace(/\\+/g, '/').indexOf('@nutui') > -1) {
+        return 375
+      }
+      // 全局使用 Taro 默认的 750 尺寸
+      return 750
+    },
+    sass: {
+      data: `@use "@nutui/nutui-react-taro/dist/styles/variables.scss" as *;`,
+    },
     defineConstants: {
     },
     copy: {
@@ -27,22 +37,11 @@ export default defineConfig(async (merge, { command, mode }) => {
       }
     },
     framework: 'react',
-    compiler: 'vite',
+    compiler: { type: 'webpack5', prebundle: { exclude: ['@nutui/nutui-react-taro', '@nutui/icons-react-taro'] }},
+    cache: {
+      enable: false // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
+    },
     mini: {
-      postcss: {
-        pxtransform: {
-          enable: true,
-          config: {
-          }
-        },
-        cssModules: {
-          enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
-          config: {
-            namingPattern: 'module', // 转换模式，取值为 global/module
-            generateScopedName: '[name]__[local]___[hash:base64:5]'
-          }
-        }
-      },
       webpackChain(chain, webpack) {
         chain.merge({
           plugin: {
@@ -51,17 +50,42 @@ export default defineConfig(async (merge, { command, mode }) => {
               args: [{
                 appType: 'taro',
                 // 下面个配置，会开启 rem -> rpx 的转化
-                rem2rpx: true
+                rem2rpx: true,
+                injectAdditionalCssVarScope: true,
               }]
             }
           }
         })
-      }
+      },
+      postcss: {
+        pxtransform: {
+          enable: true,
+          config: {
+            selectorBlackList: ['nut-']
+          }
+        },
+        htmltransform: {
+          enable: false,
+            config: {
+              removeCursorStyle: false,
+            }
+        },
+        cssModules: {
+          enable: true, // 默认为 false，如需使用 css modules 功能，则设为 true
+          config: {
+            namingPattern: 'module', // 转换模式，取值为 global/module
+            generateScopedName: '[name]__[local]___[hash:base64:5]'
+          }
+        }
+      },
     },
     h5: {
       publicPath: '/',
       staticDirectory: 'static',
-
+      output: {
+        filename: 'js/[name].[hash:8].js',
+        chunkFilename: 'js/[name].[chunkhash:8].js'
+      },
       miniCssExtractPluginOption: {
         ignoreOrder: true,
         filename: 'css/[name].[hash].css',

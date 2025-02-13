@@ -1,0 +1,15 @@
+@use 'tailwindcss/base' as *;
+@use 'tailwindcss/components' as *;
+@use 'tailwindcss/utilities' as *;
+
+
+// .theme-primary {
+//     --bg-title: 94, 25, 11
+// }
+:root {
+    --title-color: '#FF6506'
+}
+
+.very-shadow {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}

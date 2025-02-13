@@ -1,6 +1,6 @@
 {
   "miniprogramRoot": "./dist",
-  "projectname": "myApp",
+  "projectname": "apps",
   "description": "2025",
   "appid": "touristappid",
   "setting": {

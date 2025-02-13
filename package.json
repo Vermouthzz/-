@@ -1,15 +1,16 @@
 {
-  "name": "myApp",
+  "name": "apps",
   "version": "1.0.0",
   "private": true,
   "description": "2025",
   "templateInfo": {
     "name": "default",
     "typescript": false,
-    "css": "None",
+    "css": "Sass",
     "framework": "React"
   },
   "scripts": {
+    "postinstall": "weapp-tw patch",
     "build:weapp": "taro build --type weapp",
     "build:swan": "taro build --type swan",
     "build:alipay": "taro build --type alipay",
@@ -27,8 +28,7 @@
     "dev:rn": "npm run build:rn -- --watch",
     "dev:qq": "npm run build:qq -- --watch",
     "dev:jd": "npm run build:jd -- --watch",
-    "dev:harmony-hybrid": "npm run build:harmony-hybrid -- --watch",
-    "postinstall": "weapp-tw patch"
+    "dev:harmony-hybrid": "npm run build:harmony-hybrid -- --watch"
   },
   "browserslist": {
     "development": [
@@ -44,10 +44,12 @@
   "author": "",
   "dependencies": {
     "@babel/runtime": "^7.24.4",
-    "@nutui/nutui-react": "^2.7.4",
+    "@nutui/icons-react-taro": "^2.0.1",
+    "@nutui/nutui-react-taro": "^2.7.5",
     "@tarojs/components": "4.0.8",
     "@tarojs/helper": "4.0.8",
     "@tarojs/plugin-framework-react": "4.0.8",
+    "@tarojs/plugin-html": "^4.0.8",
     "@tarojs/plugin-platform-alipay": "4.0.8",
     "@tarojs/plugin-platform-h5": "4.0.8",
     "@tarojs/plugin-platform-harmony-hybrid": "4.0.8",
@@ -60,6 +62,7 @@
     "@tarojs/runtime": "4.0.8",
     "@tarojs/shared": "4.0.8",
     "@tarojs/taro": "4.0.8",
+    "clsx": "^2.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
@@ -67,10 +70,13 @@
     "@babel/core": "^7.24.4",
     "@babel/plugin-proposal-class-properties": "7.14.5",
     "@babel/preset-react": "^7.24.1",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.5",
     "@tarojs/cli": "4.0.8",
-    "@tarojs/vite-runner": "4.0.8",
+    "@tarojs/taro-loader": "4.0.8",
+    "@tarojs/webpack5-runner": "4.0.8",
+    "@types/node": "^18",
     "@types/react": "^18.0.0",
-    "@vitejs/plugin-react": "^4.3.0",
+    "@types/webpack-env": "^1.13.6",
     "autoprefixer": "^10.4.20",
     "babel-preset-taro": "4.0.8",
     "eslint": "^8.57.0",
@@ -78,12 +84,12 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.4.0",
     "postcss": "^8.4.49",
+    "postcss-rem-to-responsive-pixel": "^6.0.2",
     "react-refresh": "^0.14.0",
+    "sass": "^1.75.0",
     "stylelint": "^16.4.0",
     "tailwindcss": "^3.4.17",
-    "terser": "^5.30.4",
-    "vite": "^4.2.0",
-    "vite-plugin-style-import": "^2.0.0",
-    "weapp-tailwindcss": "^3.7.0"
+    "weapp-tailwindcss": "^3.7.0",
+    "webpack": "5.91.0"
   }
 }
