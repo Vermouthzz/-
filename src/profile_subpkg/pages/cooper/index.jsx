@@ -326,7 +326,7 @@ export default function ImgClip() {
               height: ImgInfo.displayHeight,
               transform: `translate(-${cropBoxStyle.left}px, -${cropBoxStyle.top}px)`,
             }}
-            src={ImgInfo?.path}
+            src={ImgInfo.path || ""}
           ></Image>
         </View>
         <View

@@ -1,6 +1,6 @@
 import { InteractionPage } from "./switch_page/interaction-page";
 import { MatchPage } from "./switch_page/match-page";
-import { useLoad } from "@tarojs/taro";
+import { useLoad, useUnload } from "@tarojs/taro";
 import Taro from "@tarojs/taro";
 import React, { useEffect, useRef, useState } from "react";
 import { ContextProvider, Context } from "./context";
@@ -75,7 +75,7 @@ export default function Page() {
   useLoad(() => {
     const token = Taro.getStorageSync("token");
     Taro.connectSocket({
-      url: "ws://localhost:3000/ws?token=" + token,
+      url: "ws://localhost:7001/ws?token=" + token,
     });
 
     function sendHeartMsg() {
@@ -133,8 +133,8 @@ export default function Page() {
 
     Taro.onSocketClose(() => {
       console.log("socket close");
-      if (!isClose) {
-      }
+      // if (!isClose) {
+      // }
     });
 
     Taro.onSocketError((e) => {
@@ -143,17 +143,18 @@ export default function Page() {
 
     Taro.enableAlertBeforeUnload({
       message: "您确定要离开当前对战吗?",
-      success: function (res) {
-        setIsClose(true);
-        Taro.closeSocket();
-      },
     });
+  });
+
+  useUnload(() => {
+    setIsClose(true);
+    Taro.closeSocket();
   });
 
   const reConnectSocket = () => {
     const token = Taro.getStorageSync("token");
     Taro.connectSocket({
-      url: "ws://localhost:3000/ws?token=" + token,
+      url: "ws://localhost:7001/ws?token=" + token,
       fail: (e) => {
         if (reConnectCount) {
           setTimeout(() => {

@@ -13,7 +13,7 @@ const request = ({ url, method = "GET", data = {} }) => {
         resolve(res.data);
       },
       fail: (err) => {
-        console.log(err);
+        reject(err);
       }
     });
   });
@@ -53,6 +53,10 @@ const resonseInterceptor = (chain) => {
         console.log(data, '重新请求data');
         return data
       }
+    }
+    if (res.data.code === 400) {
+      Taro.setStorageSync("token", '');
+      Taro.removeStorageSync("userInfo");
     }
     return res;
   });

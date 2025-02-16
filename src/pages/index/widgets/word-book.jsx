@@ -5,7 +5,7 @@ import Taro from "@tarojs/taro";
 export function WordBook() {
   const goToWord = () => {
     Taro.navigateTo({
-      url: "/pages/word/index",
+      url: "/pages/word-category/index",
     });
   };
   return (

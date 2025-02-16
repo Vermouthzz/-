@@ -1,21 +1,20 @@
 import { View } from "@tarojs/components";
 import { Tabs } from "@nutui/nutui-react-taro";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLoad } from "@tarojs/taro";
 
 export default function WordCatePage() {
-  const [tabList, setTabList] = useState([]);
+  const tabList = useMemo(() => {
+    return [
+      { title: "大学", id: 1, type: "" },
+      { title: "高中", id: 2, type: "" },
+      { title: "初中", id: 3, type: "" },
+      { title: "小学", id: 4, type: "" },
+    ];
+  }, []);
 
   useLoad(() => {
-    tabList.push(
-      ...[
-        { title: "大学", id: 1, type: "" },
-        { title: "高中", id: 2, type: "" },
-        { title: "初中", id: 3, type: "" },
-        { title: "小学", id: 4, type: "" },
-      ]
-    );
-    setTabList(...tabList);
+    // setTabList(...tabList);
   });
   return (
     <View>

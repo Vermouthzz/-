@@ -62,9 +62,9 @@ function TopicList() {
         <CommonItem
           clickCallback={handleClick}
           key={item.id}
-          showResult={replyInfo.isReply && item.id === selectItem?.id}
+          showResult={replyInfo.isReply && item.id === selectItem.id}
           isCorrect={
-            item.id === selectItem?.id && replyInfo.correct_id === item.id
+            item.id === selectItem.id && replyInfo.correct_id === item.id
           }
           item={item}
           className="bg-white p-4"

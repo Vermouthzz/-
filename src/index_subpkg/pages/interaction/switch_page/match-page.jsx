@@ -63,7 +63,7 @@ function RightUser() {
 
   return (
     <View className="h-full flex-1 flex flex-col justify-center items-center">
-      <Avatar className="w-24 h-24" src={otherInfo?.avatar || ""}></Avatar>
+      <Avatar className="w-24 h-24" src={otherInfo.avatar || ""}></Avatar>
     </View>
   );
 }
