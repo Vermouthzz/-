@@ -2,11 +2,8 @@ export default defineAppConfig({
   pages: [
     "pages/index/index",
     "pages/profile/index",
-    "pages/word/index",
-    "pages/word-detail/index",
-    "pages/review/index",
     "pages/search/index",
-    "pages/word-listen-write/index",
+
   ],
   window: {
     backgroundTextStyle: "light",
@@ -52,6 +49,13 @@ export default defineAppConfig({
       root: "index_subpkg",
       pages: [
         "pages/interaction/index",
+        "pages/word-listen-write/index",
+        "pages/word-category/index",
+        "pages/word-book-setting/index",
+        "pages/word-book-switch/index",
+        "pages/word/index",
+        "pages/word-detail/index",
+        "pages/review/index"
       ]
     }
   ],

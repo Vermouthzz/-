@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Cell, InfiniteLoading, Loading } from "@nutui/nutui-react-taro";
-import { ReviewWordItem } from "../components/review-word-item";
+import { WordItem } from "../../../components/word-item";
 import { View } from "@tarojs/components";
 
 export function WordReviewList() {
@@ -37,7 +37,7 @@ export function WordReviewList() {
           {wordList.map((item, index) => {
             return (
               <View className="mx-3">
-                <ReviewWordItem key={index}></ReviewWordItem>
+                <WordItem key={index}></WordItem>
               </View>
             );
           })}

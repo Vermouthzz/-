@@ -1,7 +1,7 @@
 import { Text, View } from "@tarojs/components";
 import { VolumeMax } from "@nutui/icons-react-taro";
 
-export function ReviewWordItem() {
+export function WordItem() {
   return (
     <View className="flex border-b border-[#F6F6F6] py-3 items-start">
       <Text className="rounded-full w-5 leading-5 text-sm text-center bg-[#F0F2F8] text-[#AFB1B8]">

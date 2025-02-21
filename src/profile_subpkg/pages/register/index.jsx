@@ -28,7 +28,7 @@ export default function RegisrerPage() {
         icon: "success",
       });
       Taro.navigateTo({
-        url: "/pages/login/index",
+        url: "/profile_subpkg/pages/login/index",
       });
     }
   }, [userInfo]);

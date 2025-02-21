@@ -5,7 +5,7 @@ import Taro from "@tarojs/taro";
 export function WordBook() {
   const goToWord = () => {
     Taro.navigateTo({
-      url: "/pages/word-category/index",
+      url: "/index_subpkg/pages/word-category/index",
     });
   };
   return (
@@ -25,7 +25,7 @@ export function WordBook() {
             <View
               hoverClass="bg-gray-500"
               key={item}
-              className="flex flex-col gap-2 py-1 pl-3 pr-9 rounded-lg"
+              className="flex flex-col gap-2 py-1 pl-3 pr-8 rounded-lg"
             >
               <Text>已学习</Text>
               <View className="flex items-center">
@@ -36,6 +36,18 @@ export function WordBook() {
           ))}
         </View>
       </View>
+      <Button
+        type="primary"
+        className="py-1 rounded-full w-40 mx-auto"
+        block
+        onClick={() => {
+          Taro.navigateTo({
+            url: "/index_subpkg/pages/word-category/index",
+          });
+        }}
+      >
+        开始学习
+      </Button>
     </Card>
   );
 }

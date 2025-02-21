@@ -281,16 +281,7 @@ export default function ImgClip() {
       // catchMove
     >
       <View className="absolute overflow-hidden left-0 top-0 w-full h-full">
-        {/* <Image
-          className="absolute"
-          style={{
-            width: ImgInfo.displayWidth,
-            height: ImgInfo.displayHeight,
-            left: ImgInfo.left,
-            top: ImgInfo.top,
-          }}
-          src={ImgInfo?.path}
-        ></Image> */}
+
         <Canvas
           className="absolute"
           style={{

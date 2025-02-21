@@ -1,7 +1,7 @@
 import { View } from "@tarojs/components";
 import { Tabs } from "@nutui/nutui-react-taro";
 import { useMemo, useState } from "react";
-import { useLoad } from "@tarojs/taro";
+import Taro, { useLoad } from "@tarojs/taro";
 
 export default function WordCatePage() {
   const tabList = useMemo(() => {
@@ -12,10 +12,9 @@ export default function WordCatePage() {
       { title: "小学", id: 4, type: "" },
     ];
   }, []);
+  const [tab1value, setTab1value] = useState("0");
 
-  useLoad(() => {
-    // setTabList(...tabList);
-  });
+  useLoad(() => {});
   return (
     <View>
       <Tabs
@@ -27,10 +26,22 @@ export default function WordCatePage() {
       >
         {tabList.map((item) => (
           <Tabs.TabPane key={item.id} title={item.title}>
-            {item.title}
+            <BookItem></BookItem>
           </Tabs.TabPane>
         ))}
       </Tabs>
+    </View>
+  );
+}
+
+function BookItem() {
+  return (
+    <View
+      onClick={() =>
+        Taro.navigateTo({ url: "/index_subpkg/pages/word-list/index" })
+      }
+    >
+      BookItem
     </View>
   );
 }

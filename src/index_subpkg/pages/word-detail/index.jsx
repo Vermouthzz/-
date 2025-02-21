@@ -1,5 +1,5 @@
 import { View } from "@tarojs/components";
-import { CustomHeader } from "../../components/custom-header";
+import { CustomHeader } from "../../../components/custom-header";
 import { WordEnglish } from "./widgets/word-english";
 import { WordChinese } from "./widgets/word-chinese";
 import { WordTransform } from "./widgets/wrod-transform";

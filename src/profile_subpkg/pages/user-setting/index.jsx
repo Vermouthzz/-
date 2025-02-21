@@ -18,24 +18,6 @@ export default function UserSettingPage() {
         Taro.navigateTo({
           url: `/profile_subpkg/pages/cooper/index?path=${tempFilePaths[0]}`,
         });
-        // Taro.uploadFile({
-        //   url: "http://127.0.0.1:3000/upload/avatar", //仅为示例，并非真实的接口地址
-        //   header: {
-        //     token: "Bearer " + Taro.getStorageSync("token"),
-        //   },
-        //   filePath: tempFilePaths[0],
-        //   name: "file",
-        //   success: function (res) {
-        //     console.log(res);
-        //     const data = JSON.parse(res.data);
-        //     if (res.statusCode === 200) {
-        //       setUserInfo((prev) => ({ ...prev, avatar: data.filePath }));
-        //       const info = Taro.getStorageSync("userInfo");
-        //       info.avatar = data.filePath;
-        //       Taro.setStorageSync("userInfo", info);
-        //     }
-        //   },
-        // });
       },
     });
   };

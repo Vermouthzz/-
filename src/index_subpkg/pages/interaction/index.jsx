@@ -31,6 +31,7 @@ export default function Page() {
   const [question, setQuestion] = useState({}); // 问题
   const [time, setTime] = useState(10); // 时间
   const game_id = useRef(null); // 游戏id
+  const heartTimer = useRef(null); // 心跳定时器
 
   const [replyInfo, setReplyInfo] = useState({
     isCorrect: false,
@@ -79,11 +80,10 @@ export default function Page() {
     });
 
     function sendHeartMsg() {
-      setTimeout(() => {
+      heartTimer.current = setInterval(() => {
         Taro.sendSocketMessage({
           data: JSON.stringify({ type: "heart" }),
         });
-        sendHeartMsg();
       }, 10000);
     }
 
@@ -148,6 +148,7 @@ export default function Page() {
 
   useUnload(() => {
     setIsClose(true);
+    heartTimer.current && clearInterval(heartTimer.current);
     Taro.closeSocket();
   });
 
