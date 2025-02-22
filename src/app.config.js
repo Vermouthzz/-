@@ -3,7 +3,6 @@ export default defineAppConfig({
     "pages/index/index",
     "pages/profile/index",
     "pages/search/index",
-
   ],
   window: {
     backgroundTextStyle: "light",
@@ -55,7 +54,8 @@ export default defineAppConfig({
         "pages/word-book-switch/index",
         "pages/word/index",
         "pages/word-detail/index",
-        "pages/review/index"
+        "pages/review/index",
+        "pages/word-study-list/index"
       ]
     }
   ],

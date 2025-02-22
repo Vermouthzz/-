@@ -1,7 +1,7 @@
 import { Text, View } from "@tarojs/components";
-import { CustomHeader } from "../../components/custom-header";
+// import { CustomHeader } from "../../components/custom-header";
 import { Answer } from "./widgets/answer";
-import { useSafeInfo } from "../../hooks/useSystemInfo";
+import { useSafeInfo } from "../../../hooks/useSystemInfo";
 import { WordVerify } from "./widgets/word-verify";
 
 export default function WordPage() {
@@ -12,7 +12,7 @@ export default function WordPage() {
       className="h-screen flex flex-col"
       style={{ background: "linear-gradient(to bottom, #ff6506, #ff9f43)" }}
     >
-      <CustomHeader></CustomHeader>
+      {/* <CustomHeader></CustomHeader> */}
       <View className="flex-1 flex flex-col items-center justify-around">
         <Text className="text-white">1/10</Text>
         <WordVerify></WordVerify>

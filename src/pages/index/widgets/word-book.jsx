@@ -1,5 +1,6 @@
 import { Text, View } from "@tarojs/components";
 import { Card } from "../components/card";
+import { Button } from "@nutui/nutui-react-taro";
 import Taro from "@tarojs/taro";
 
 export function WordBook() {
@@ -38,7 +39,7 @@ export function WordBook() {
       </View>
       <Button
         type="primary"
-        className="py-1 rounded-full w-40 mx-auto"
+        className="py-1 rounded-full w-40 mt-2 mx-auto"
         block
         onClick={() => {
           Taro.navigateTo({

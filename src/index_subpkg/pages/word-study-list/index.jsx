@@ -1,7 +1,8 @@
 import { View } from "@tarojs/components";
 import { Tabs } from "@nutui/nutui-react-taro";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { WordItem } from "../../components/word-item";
+import "./index.scss";
 
 export default function WordStudyList() {
   const tabList = useMemo(() => {
@@ -33,6 +34,11 @@ export default function WordStudyList() {
       >
         {tabList.map((item) => (
           <Tabs.TabPane key={item.id} title={item.title}>
+            <WordItem></WordItem>
+            <WordItem></WordItem>
+            <WordItem></WordItem>
+            <WordItem></WordItem>
+            <WordItem></WordItem>
             <WordItem></WordItem>
           </Tabs.TabPane>
         ))}
