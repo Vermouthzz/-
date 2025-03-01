@@ -30,14 +30,17 @@ export default function ImgClip() {
   const [direction, setDirection] = useState("move"); // 移动方向
 
   const handleTouchMove = (e) => {
+    // console.log(startInfo.current);
+
     if (e.touches.length === 1) {
       //单指拖动
       const { clientX, clientY } = e.touches[0];
+      const { clientX: startX, clientY: startY } = startInfo.current[0];
       const { screenWidth, screenHeight } = sysInfo.current;
-      const { width: cropWidth, height: cropHeight } = cropBoxStyle;
+      const { width: cropWidth, height: cropHeight, left, top } = cropBoxStyle;
 
-      let newLeft = clientX - cropWidth / 2;
-      let newTop = clientY - cropHeight / 2;
+      let newLeft = clientX - startX + left;
+      let newTop = clientY - startY + top;
 
       // 限制裁剪框在图片范围内
       if (newLeft < 0) newLeft = 0;
@@ -46,11 +49,18 @@ export default function ImgClip() {
       if (newTop + cropHeight > screenHeight)
         newTop = screenHeight - cropHeight;
 
-      setCropBoxStyle((prev) => ({
-        ...prev,
-        left: newLeft,
-        top: newTop,
-      }));
+      requestAnimationFrame(() => {
+        startInfo.current[0] = {
+          ...startInfo.current[0],
+          clientX,
+          clientY,
+        };
+        setCropBoxStyle((prev) => ({
+          ...prev,
+          left: newLeft,
+          top: newTop,
+        }));
+      });
     } else {
       //双指放大
       let width = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
@@ -58,30 +68,14 @@ export default function ImgClip() {
     }
   };
 
-  const handleScale = (e) => {
-    if (e.touches.length === 2) {
-      const distance = Math.sqrt(
-        Math.pow(e.touches[1].clientX - e.touches[0].clientX, 2) +
-          Math.pow(e.touches[1].clientY - e.touches[0].clientY, 2)
-      );
-
-      // 计算缩放比例
-      const newScale = distance / 200; // 200是一个基准值，可以根据需要调整
-      setScale(newScale);
-      setCropBoxStyle((prev) => ({
-        ...prev,
-        width: 200 * newScale, // 根据缩放比例调整裁剪框宽度
-        height: 200 * newScale, // 根据缩放比例调整裁剪框高度
-      }));
-    }
-  };
   const ctx = useRef(null);
   useReady(() => {
     ctx.current = Taro.createCanvasContext("myCanvas");
   });
 
   useEffect(() => {
-    if (ImgInfo.path) {
+    if (ImgInfo.path && ctx.current) {
+      const { devicePixelRatio } = sysInfo.current;
       ctx.current.drawImage(
         ImgInfo.path,
         0,
@@ -89,12 +83,14 @@ export default function ImgClip() {
         ImgInfo.displayWidth,
         ImgInfo.displayHeight
       );
+      ctx.current.scale(devicePixelRatio, devicePixelRatio);
       ctx.current.draw();
     }
-  }, [ctx.current]);
+  }, [ctx.current, ImgInfo.path]);
 
   const touchStartFn = (e, type) => {
     e.stopPropagation();
+    // console.log(e);
     setDirection(type);
     const { clientX, clientY } = e.touches[0];
     startInfo.current[0] = {
@@ -118,29 +114,36 @@ export default function ImgClip() {
 
   function blockMove(e) {
     const { clientX, clientY } = e.touches[0];
+    const { screenWidth } = sysInfo.current;
     const move = clientX - startInfo.current[0].clientX;
     let left, top, size;
-    if (move < 0) {
-      size = -move + cropBoxStyle.width;
+
+    if (direction === "left-top") {
       left = cropBoxStyle.left + move >= 0 ? cropBoxStyle.left + move : 0;
       top = cropBoxStyle.top + move >= 0 ? cropBoxStyle.top + move : 0;
-    } else {
+      if (left === 0) top = cropBoxStyle.top;
       size = cropBoxStyle.width - move;
-      left = cropBoxStyle.left + move;
-      top = cropBoxStyle.top + move;
     }
 
-    if (direction === "right-top" || direction === "right-bottom") {
+    if (direction === "right-top") {
+      left = cropBoxStyle.left;
+      top = cropBoxStyle.top - move >= 0 ? cropBoxStyle.top - move : 0;
+      size = cropBoxStyle.width + move;
+    }
+
+    if (direction === "left-bottom") {
+      top = cropBoxStyle.top;
+      left = cropBoxStyle.left + move >= 0 ? cropBoxStyle.left + move : 0;
+      size = cropBoxStyle.width - move;
+    }
+
+    if (direction === "right-bottom") {
+      top = cropBoxStyle.top;
       left = cropBoxStyle.left;
       size = cropBoxStyle.width + move;
-      top = cropBoxStyle.top - move;
-    }
-    if (direction === "left-bottom" || direction === "right-bottom") {
-      top = cropBoxStyle.top;
     }
 
-    if (size <= cropBoxStyle.minScale || size > sysInfo.current.screenWidth)
-      return;
+    if (size <= cropBoxStyle.minScale || size > screenWidth) return;
 
     if (left >= 0 && top >= 0 && left + size <= sysInfo.current.screenWidth) {
       requestAnimationFrame(() => {
@@ -155,12 +158,6 @@ export default function ImgClip() {
           }
           if (prev.top === 0) {
             size = prev.height;
-          }
-          if (direction === "left-bottom" || direction === "right-bottom") {
-            top = prev.top;
-          }
-          if (direction === "right-top" || direction === "right-bottom") {
-            left = prev.left;
           }
           return {
             ...prev,
@@ -234,7 +231,16 @@ export default function ImgClip() {
     }
   };
 
-  const moveStart = () => {
+  const moveStart = (e) => {
+    const { clientX, clientY } = e.touches[0];
+    startInfo.current[0] = {
+      clientX,
+      clientY,
+      initialWidth: cropBoxStyle.width,
+      initialHeight: cropBoxStyle.height,
+      initialLeft: cropBoxStyle.left,
+      initialTop: cropBoxStyle.top,
+    };
     setDirection("move");
   };
 
@@ -281,19 +287,16 @@ export default function ImgClip() {
       // catchMove
     >
       <View className="absolute overflow-hidden left-0 top-0 w-full h-full">
-
-        <Canvas
+        <Image
           className="absolute"
           style={{
-            width: ImgInfo.width,
-            height: ImgInfo.height,
+            width: ImgInfo.displayWidth,
+            height: ImgInfo.displayHeight,
             left: ImgInfo.left,
             top: ImgInfo.top,
           }}
-          width={ImgInfo.width}
-          height={ImgInfo.height}
-          canvasId="myCanvas"
-        ></Canvas>
+          src={ImgInfo.path || ""}
+        ></Image>
       </View>
       {/* 遮罩层 */}
       <View className="bg-[#000] opacity-50 w-full h-full absolute left-0 top-0"></View>
@@ -319,31 +322,44 @@ export default function ImgClip() {
             }}
             src={ImgInfo.path || ""}
           ></Image>
+          <Canvas
+            className="absolute -left-[9999px]"
+            width={ImgInfo.width}
+            height={ImgInfo.height}
+            canvasId="myCanvas"
+          ></Canvas>
         </View>
         <View
           onTouchStart={moveStart}
-          className=" bg-white opacity-10 absolute left-0 top-0 w-full h-full"
+          className=" bg-white opacity-10 absolute left-0 top-0 w-full h-full z-[52]"
         ></View>
+
+        {/* 竖向 */}
+        <View className="absolute top-0 left-1/3 border-l border-2 border-r border-dashed w-1/3 h-full opacity-50 border-[#eee]"></View>
+        {/* 横向 */}
+        <View className="absolute opacity-50 border-t border-b border-2 border-dashed left-0 top-1/3 w-full h-1/3 border-[#eee]"></View>
+        {/* 裁剪框控制点 */}
+
         {/* 线 */}
         <TouchLine
           type="top"
           startCallback={touchStartFn}
-          className={"w-full h-[4rpx] left-0 top-0"}
+          className={"w-full h-[6rpx] left-0 top-0"}
         ></TouchLine>
         <TouchLine
           type="bottom"
           startCallback={touchStartFn}
-          className=" w-full h-[4rpx] left-0 bottom-0"
+          className=" w-full h-[6rpx] left-0 bottom-0"
         ></TouchLine>
         <TouchLine
           startCallback={touchStartFn}
           type="left"
-          className="h-full w-[4rpx] left-0 top-0"
+          className="h-full w-[6rpx] left-0 top-0"
         ></TouchLine>
         <TouchLine
           type="right"
           startCallback={touchStartFn}
-          className="h-full w-[4rpx] right-0 top-0"
+          className="h-full w-[6rpx] right-0 top-0"
         ></TouchLine>
         {/* 左上角 */}
         <TouchBlock
@@ -381,6 +397,15 @@ export default function ImgClip() {
             canvasId: ctx.current.canvasId,
             success: function (res) {
               console.log(res.tempFilePath);
+              Taro.saveImageToPhotosAlbum({
+                filePath: res.tempFilePath,
+                success: function (res) {
+                  Taro.showToast({
+                    title: "保存成功",
+                    icon: "success",
+                  });
+                },
+              });
             },
           });
         }}

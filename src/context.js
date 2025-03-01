@@ -4,7 +4,7 @@ import { settingReducer, initialState } from './hooks/settingReducer'
 
 export const Context = createContext(null);
 
-export const ContextProvider = ({ children }) => {
+export const ContextProvider = ({ children, ...props }) => {
   const [settingState, setSettingState] = useReducer(settingReducer, initialState)
 
   const ContextValue = {

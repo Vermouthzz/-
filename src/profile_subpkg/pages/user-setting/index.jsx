@@ -18,6 +18,9 @@ export default function UserSettingPage() {
         Taro.navigateTo({
           url: `/profile_subpkg/pages/cooper/index?path=${tempFilePaths[0]}`,
         });
+        // Taro.navigateTo({
+        //   url: `/profile_subpkg/pages/share-poster/index?backUrl=${tempFilePaths[0]}`,
+        // });
       },
     });
   };

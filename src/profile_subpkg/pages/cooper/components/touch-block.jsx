@@ -5,7 +5,7 @@ export function TouchBlock({ type, className, startCallback }) {
     <View
       // onTouchMove={(e) => moveCallback(e)}
       onTouchStart={(e) => startCallback(e, type)}
-      className={clsx("line-border w-[16rpx] h-[16rpx] z-[52]", className)}
+      className={clsx("line-border w-[24rpx] h-[24rpx] z-[52]", className)}
     ></View>
   );
 }

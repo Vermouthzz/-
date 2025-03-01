@@ -41,7 +41,8 @@ export default defineAppConfig({
         "pages/setting/index",
         "pages/theme/index",
         "pages/user-setting/index",
-        "pages/cooper/index"
+        "pages/cooper/index",
+        "pages/share-poster/index"
       ],
     },
     {

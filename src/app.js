@@ -16,7 +16,7 @@ function App({ children }) {
   });
 
   // children 是将要会渲染的页面
-  return <ContextProvider>
+  return <ContextProvider value={{}}>
     {children}
   </ContextProvider>
 
