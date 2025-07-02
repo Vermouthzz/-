@@ -1,48 +1,50 @@
-import React, { useState, useEffect } from "react";
-import { Cell, InfiniteLoading, Loading } from "@nutui/nutui-react-taro";
+import React, { useState, useEffect, useRef } from "react";
 import { WordItem } from "../../../components/word-item";
 import { View } from "@tarojs/components";
+import clsx from "clsx";
+import { Empty } from "@nutui/nutui-react-taro";
+import { useContext } from "../../../../hooks/immutable";
+import { Context } from "../context";
+import Taro from "@tarojs/taro";
 
-export function WordReviewList() {
-  const [hasMore, setHasMore] = useState(true);
-  const [wordList, setWordList] = useState([]);
-  const loadMore = () => {};
-  const getWordList = () => {
-    wordList.push(...[1, 2, 3, 4, 5, 6, 7]);
-    setWordList([...wordList]);
+export function WordReviewList({ list, className }) {
+  const { setting } = useContext(Context);
+  const voiceRef = useRef(null);
+
+  const handleVoice = (url) => {
+    voiceRef.current.src = url;
+    voiceRef.current.play();
   };
-  useEffect(() => {
-    console.log(111);
 
-    getWordList();
+  useEffect(() => {
+    voiceRef.current = Taro.createInnerAudioContext();
   }, []);
+
   return (
-    <View>
-      <View
-        className="w-full p-0 overflow-y-auto overflow-x-hidden"
-        id="scroll"
-      >
-        <InfiniteLoading
-          target="scroll"
-          hasMore={hasMore}
-          onLoadMore={loadMore}
-          loadingText={
-            <>
-              {Loading}
-              加载中
-            </>
-          }
-          loadMoreText={<>没有更多了</>}
-        >
-          {wordList.map((item, index) => {
-            return (
-              <View className="mx-3">
-                <WordItem key={index}></WordItem>
-              </View>
-            );
-          })}
-        </InfiniteLoading>
-      </View>
+    <View
+      className={clsx(
+        "w-full p-0 overflow-y-auto overflow-x-hidden",
+        className
+      )}
+    >
+      {list.length ? (
+        list.map((item, index) => {
+          return (
+            <View className="mx-3">
+              <WordItem
+                showDesc={setting.showDesc}
+                showWord={setting.showWord}
+                key={index}
+                item={item}
+                index={index}
+                handleVoice={handleVoice}
+              ></WordItem>
+            </View>
+          );
+        })
+      ) : (
+        <Empty description="暂无数据"></Empty>
+      )}
     </View>
   );
 }

@@ -1,7 +1,6 @@
 import Taro from "../../node_modules/@tarojs/taro";
 import { refreshAccessToken } from "../api/user";
 const baseUrl = "http://localhost:7001";
-// const baseUrl = "http://192.168.185.138:3000";
 
 const request = ({ url, method = "GET", data = {} }) => {
   return new Promise((resolve, reject) => {
@@ -29,8 +28,12 @@ const requestInterceptor = (chain) => {
   if (token) {
     requestParams.header = {
       ...requestParams.header,
-      Authorization: `${token}`,
+      Authorization: `Bearer ${token}`,
     };
+  }
+  requestParams.header = {
+    ...requestParams.header,
+    cookie: ''
   }
   if (refreshToken) {
     requestParams.header = {
@@ -50,9 +53,11 @@ const resonseInterceptor = (chain) => {
   const { requestParams } = chain;
   return chain.proceed(requestParams).then(async (res) => {
     if (res.statusCode === 200 && requestParams.url.includes('/login')) {
-      const cookie = res.cookies[0];
-      const refreshToken = cookie.split("=")[1].split(";")[0];
-      Taro.setStorageSync("refreshToken", refreshToken);
+      if (res.cookies) {
+        const cookie = res.cookies[0];
+        const refreshToken = cookie.split("=")[1].split(";")[0];
+        Taro.setStorageSync("refreshToken", refreshToken);
+      }
     }
     if (res.data.code === 401 && !requestParams.url.includes('/refresh') && requestParams.header.cookie) {
       const newRes = await refreshAccessToken();
@@ -61,7 +66,7 @@ const resonseInterceptor = (chain) => {
       if (newRes.code === 200) {
         const newToken = newRes.token;
         Taro.setStorageSync("token", newToken);
-        requestParams.header.Authorization = newToken;
+        requestParams.header.Authorization = `Bearer ${newToken}`;
         const data = await Taro.request(requestParams)
         console.log(data, '重新请求data');
         return data

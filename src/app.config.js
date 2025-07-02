@@ -15,15 +15,9 @@ export default defineAppConfig({
       {
         text: "首页",
         pagePath: "pages/index/index",
-        iconPath: "./public/image/common/my.png",
-        selectedIconPath: "./public/image/common/my.png",
+        iconPath: "./public/image/common/首页.png",
+        selectedIconPath: "./public/image/common/首页.png",
       },
-      // {
-      //   text: "对战",
-      //   pagePath: "pages/interaction/index",
-      //   iconPath: "./public/image/common/my.png",
-      //   selectedIconPath: "./public/image/common/my.png",
-      // },
       {
         text: "我的",
         pagePath: "pages/profile/index",
@@ -42,7 +36,8 @@ export default defineAppConfig({
         "pages/theme/index",
         "pages/user-setting/index",
         "pages/cooper/index",
-        "pages/share-poster/index"
+        "pages/shengci/index",
+        "pages/shoucang/index",
       ],
     },
     {
@@ -54,6 +49,7 @@ export default defineAppConfig({
         "pages/word-book-setting/index",
         "pages/word-book-switch/index",
         "pages/word/index",
+        "pages/search-word/index",
         "pages/word-detail/index",
         "pages/review/index",
         "pages/word-study-list/index"

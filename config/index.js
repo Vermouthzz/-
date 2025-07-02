@@ -2,6 +2,7 @@ import { defineConfig } from '@tarojs/cli'
 const { UnifiedWebpackPluginV5 } = require('weapp-tailwindcss/webpack')
 import devConfig from './dev'
 import prodConfig from './prod'
+const path = require('path')
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig(async (merge, { command, mode }) => {
@@ -17,13 +18,16 @@ export default defineConfig(async (merge, { command, mode }) => {
     sourceRoot: 'src',
     outputRoot: 'dist',
     plugins: ['@tarojs/plugin-html'],
-    designWidth (input) {
+    designWidth(input) {
       // 配置 NutUI 375 尺寸
       if (input?.file?.replace(/\\+/g, '/').indexOf('@nutui') > -1) {
         return 375
       }
       // 全局使用 Taro 默认的 750 尺寸
       return 750
+    },
+    alias: {
+      '@/assets': path.resolve(__dirname, '..', 'src/assets'),
     },
     sass: {
       data: `@use "@nutui/nutui-react-taro/dist/styles/variables.scss" as *;`,
@@ -37,7 +41,7 @@ export default defineConfig(async (merge, { command, mode }) => {
       }
     },
     framework: 'react',
-    compiler: { type: 'webpack5', prebundle: { exclude: ['@nutui/nutui-react-taro', '@nutui/icons-react-taro'] }},
+    compiler: { type: 'webpack5', prebundle: { exclude: ['@nutui/nutui-react-taro', '@nutui/icons-react-taro'] } },
     cache: {
       enable: false // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
     },
@@ -66,9 +70,9 @@ export default defineConfig(async (merge, { command, mode }) => {
         },
         htmltransform: {
           enable: false,
-            config: {
-              removeCursorStyle: false,
-            }
+          config: {
+            removeCursorStyle: false,
+          }
         },
         cssModules: {
           enable: true, // 默认为 false，如需使用 css modules 功能，则设为 true

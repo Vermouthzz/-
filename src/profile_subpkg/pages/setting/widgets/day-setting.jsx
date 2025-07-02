@@ -3,8 +3,6 @@ import { CommonLine } from "../../../components/common-line";
 import { RightWidget } from "../components/right-widget";
 
 export function DaySetting({ list }) {
-  console.log(list, "day-setting");
-
   return (
     <View>
       {list.map((item) => (

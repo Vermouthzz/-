@@ -3,7 +3,13 @@
 
 export const settingReducer = (state, action) => {
   const { type, payload } = action;
+  if (type === 'all') {
+    return {
+      ...payload
+    }
+  }
   const res = updateSetting(state[type], payload)
+
   switch (type) {
     case 'daySetting':
       return {
@@ -36,8 +42,6 @@ function updateSetting(list, payload) {
   if (index !== -1) {
     list[index] = { ...list[index], ...payload }
   }
-  console.log(list, '修改后list');
-
   return list
 }
 
@@ -45,22 +49,24 @@ function updateSetting(list, payload) {
 export const initialState = {
   daySetting: [
     {
-      text: '每日学习',
+      text: '学习是否自动播放音频',
       type: 'study',
       value: true,
       renderType: 'switch'
-    },
-    {
-      text: '每日复习',
-      type: 'review',
-      value: true,
-      renderType: 'switch'
-    },
+    }
   ],
   reviewSetting: [
     {
       text: '复习时重复次数',
       type: 'repeat-num',
+      value: 1,
+      min: 1,
+      max: 10,
+      renderType: 'inputNumber'
+    },
+    {
+      text: '听写时重复次数',
+      type: 'review-listen-num',
       value: 1,
       min: 1,
       max: 10,
@@ -79,8 +85,16 @@ export const initialState = {
   ],
   wordSetting: [
     {
-      text: '每组单词数量',
-      type: 'word-num',
+      text: '每日学习单词数量',
+      type: 'study-word-num',
+      value: 10,
+      min: 10,
+      max: 20,
+      renderType: 'inputNumber'
+    },
+    {
+      text: '复习每组单词数量',
+      type: 'repeat-word-num',
       value: 10,
       min: 10,
       max: 20,

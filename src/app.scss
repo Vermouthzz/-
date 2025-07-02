@@ -6,9 +6,18 @@
 // .theme-primary {
 //     --bg-title: 94, 25, 11
 // }
-:root {
-    --title-color: '#FF6506'
+page {
+    height: 100vh;
+    --title-color: #FF6506;
+    --word-bg-color: green;
+    --theme-bg-color: #FF6506;
+    // --                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 }
+
+.red-thme {
+    --title-color: red;
+}
+
 
 .very-shadow {
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;

@@ -76,7 +76,7 @@ export default function Page() {
   useLoad(() => {
     const token = Taro.getStorageSync("token");
     Taro.connectSocket({
-      url: "ws://localhost:7001/ws?token=" + token,
+      url: "ws://localhost:7001/ws?token=" + `Bearer ${token}`,
     });
 
     function sendHeartMsg() {
@@ -95,6 +95,8 @@ export default function Page() {
     });
 
     Taro.onSocketMessage((res) => {
+      console.log(res, "服务器数据");
+
       const data = JSON.parse(res.data);
       if (data.type === "question") {
         setQuestion(data); // 设置选项
@@ -128,6 +130,20 @@ export default function Page() {
           }));
         }
         updateUserInfo(data);
+      } else if (data.type === "opponent_disconnect") {
+        const { resultList } = data;
+        setFinishInfo({
+          isFinished: true,
+          resultList,
+        });
+        setAllUserInfo((prev) => ({
+          ...prev,
+          myInfo: { ...prev.myInfo, is_winner: true },
+        }));
+        Taro.showToast({
+          title: "对手已逃跑",
+          icon: "none",
+        });
       }
     });
 

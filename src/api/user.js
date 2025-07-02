@@ -1,6 +1,6 @@
 import request from "../request";
 
-export const getUserInfo = (params) => {
+export const getUserInfoAPI = (params) => {
   return request({
     url: "/user/info",
     method: "GET",

@@ -9,32 +9,42 @@ export function InteractionResult({ className }) {
   const list = [1, 2, 3, 4];
   return (
     <View
-      className={clsx("rounded-md p-3 bg-[#546EDC] overflow-scroll", className)}
+      className={clsx(
+        "rounded-md p-3 flex flex-col gap-3 bg-[#546EDC] overflow-scroll",
+        className
+      )}
     >
       {finishInfo.resultList.map((item) => (
-        <ResultItem
-          key={item.word}
-          myAns={item.answerResult}
-          otherAns={item.otherAnswerResult}
-        >
-          <View className="flex flex-col items-center">
+        <ResultItem key={item.word} item={item}>
+          {/* <View className="flex flex-col items-center">
             <Text className="text-white text-lg">{item.word}</Text>
             <Text className="text-[#eee] text-sm text-center line-clamp-2">
               {item.mean}
             </Text>
-          </View>
+          </View> */}
         </ResultItem>
       ))}
     </View>
   );
 }
 
-function ResultItem({ children, myAns, otherAns }) {
+function ResultItem({ item }) {
   return (
-    <View className="flex justify-between items-center py-3 border-b border-[#ccc]">
-      <CustomResult flag={myAns} />
-      {children}
-      <CustomResult flag={otherAns} />
+    // <View className="flex justify-between items-center py-3 border-b border-[#ccc]">
+    //   <CustomResult flag={myAns} />
+    //   {children}
+    //   <CustomResult flag={otherAns} />
+    // </View>
+    <View
+      className={`flex items-center justify-between p-3 rounded-lg ${
+        item.answerResult ? "bg-green-50" : "bg-red-50"
+      }`}
+    >
+      <View>
+        <View className="font-medium">{item.word}</View>
+        <View className="text-sm text-gray-500">{item.mean}</View>
+      </View>
+      <CustomResult flag={item.answerResult} />
     </View>
   );
 }
@@ -53,7 +63,7 @@ function CustomResult({ flag }) {
       fontClassName="iconfont"
       classPrefix="icon"
       name="cuowu"
-      size={"32"}
+      size={"28"}
       color="red"
     />
   );

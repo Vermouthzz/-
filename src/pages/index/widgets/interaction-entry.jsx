@@ -1,26 +1,27 @@
-import { Button, Text, View } from "@tarojs/components";
+import { Text, View } from "@tarojs/components";
+import { Button } from "@nutui/nutui-react-taro";
 import { Card } from "../components/card";
 import Taro from "@tarojs/taro";
 import { useContext, useEffect, useState } from "react";
-import { Context } from "../context";
+import { IndexContext } from "../context";
+import { judgeIsLogin } from "../../../utils";
 
 export function InteractionEntry({}) {
-  const toInteractionMatch = () => {
+  const toInteractionMatch = judgeIsLogin(() => {
     Taro.navigateTo({
       url: "/index_subpkg/pages/interaction/index",
     });
-  };
+  });
   return (
     <Card title={"单词乱斗"}>
-      <View className="flex gap-3 mb-3">
+      <View className="flex gap-3 py-4">
         <View></View>
-        <View>
-          <EntryRight />
-        </View>
+        <EntryRight />
       </View>
       <Button
-        type="primary"
-        className="py-1 rounded-full w-40 mx-auto"
+        // type="primary"
+        style={{ backgroundColor: "#8ABD5F" }}
+        className="py-4 rounded-full w-40 mt-6 mb-3 text-[28rpx] mx-auto "
         block
         onClick={toInteractionMatch}
       >
@@ -31,17 +32,11 @@ export function InteractionEntry({}) {
 }
 
 function EntryRight({}) {
-  const { interactionInfo } = useContext(Context);
-  const [list, setList] = useState([
-    { text: "累计pk数", value: 0, type: "total_count" },
-    { text: "累计胜场", value: 0, type: "win_count" },
-    { text: "pk胜率", value: "0%", type: "win_rate" },
-  ]);
+  const { interactionInfo } = useContext(IndexContext);
 
-  useEffect(() => {}, [interactionInfo]);
   return (
-    <View className="felx gap-3 flex-wrap">
-      {list.map((item) => (
+    <View className="flex gap-3 flex-wrap w-full">
+      {interactionInfo.map((item, index) => (
         <RightItem item={item} key={item.text} />
       ))}
     </View>
@@ -50,8 +45,11 @@ function EntryRight({}) {
 
 function RightItem({ item }) {
   return (
-    <View className="flex gap-2 flex-col items-center">
-      <Text>{item.value}</Text>
+    <View className="flex flex-1 gap-1 flex-col items-center">
+      <Text>
+        {item.value}
+        {item.unit ? item.unit : ""}
+      </Text>
       <Text>{item.text}</Text>
     </View>
   );

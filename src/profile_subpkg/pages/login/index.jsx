@@ -1,12 +1,13 @@
 import { Text, View } from "@tarojs/components";
 import React, { useCallback, useState } from "react";
 import { Button, Form, Input } from "@nutui/nutui-react-taro";
-import Taro from "@tarojs/taro";
+import Taro, { useLoad } from "@tarojs/taro";
 import { login } from "../../../api/user";
 
 export default function Login() {
   const [userInfo, setUserInfo] = useState({ account: "", password: "" });
   const [isRegister, setIsRegister] = useState(false);
+  const [isToProfile, setIsToProfile] = useState(false);
   const submit = useCallback(async () => {
     const { account, password } = userInfo;
     if (!account || !password) {
@@ -24,12 +25,27 @@ export default function Login() {
         icon: "none",
       });
       setTimeout(() => {
-        Taro.switchTab({ url: "/pages/profile/index" });
+        if (!isToProfile) {
+          Taro.switchTab({ url: "/pages/profile/index" });
+        } else {
+          Taro.navigateBack();
+        }
       }, 500);
     }
   }, [userInfo.account, userInfo.password]);
 
-  const toRegister = () => {};
+  const toRegister = () => {
+    Taro.redirectTo({
+      url: "/profile_subpkg/pages/register/index",
+    });
+  };
+  useLoad((options) => {
+    if ("back" in options) {
+      console.log(options);
+
+      setIsToProfile(true);
+    }
+  });
   return (
     <View className="h-screen px-10 flex flex-col gap-6">
       <View className="text-2xl font-bold mt-20 pl-4">欢迎登陆</View>

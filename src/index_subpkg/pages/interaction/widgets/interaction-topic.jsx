@@ -44,8 +44,9 @@ function TopicList() {
     game_id,
     time,
   } = useContext(Context);
+  console.log(options, "选项列表");
 
-  const [selectItem, setSelectItem] = useState(null);
+  const [selectItem, setSelectItem] = useState({ id: -1 });
   const handleClick = (item) => {
     if (replyInfo.isReply || time === 0) return;
     const data = {

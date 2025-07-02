@@ -12,11 +12,13 @@ export default function Setting() {
   const { settingState, setSettingState } = useContext(Context);
 
   useLoad(() => {
-    const setting = Taro.getStorageSync("settingState");
-    // if(setting) {}
+    const setting = Taro.getStorageSync("setting");
+    if (setting) {
+      setSettingState({ type: "all", payload: setting });
+    }
   });
   useUnload(() => {
-    // Taro.setStorageSync("settingState", settingState);
+    Taro.setStorageSync("setting", settingState);
   });
   return (
     <View className="h-screen">

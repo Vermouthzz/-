@@ -33,10 +33,18 @@ function Footer({ className }) {
     reSetGeme();
   };
   return (
-    <View className={clsx(className, "")}>
-      <Button className="w-4/5 bg-inherit text-white" onClick={reStart}>
-        再来一局
-      </Button>
+    <View className={clsx("w-full shadow-t-md", className)}>
+      <View className="grid grid-cols-2 gap-4 p-4">
+        <Button
+          onClick={reStart}
+          className="!rounded-button bg-blue-600 text-white py-3 text-center font-medium"
+        >
+          再来一局
+        </Button>
+        <Button className="!rounded-button bg-gray-200 text-gray-700 py-3 text-center font-medium">
+          返回首页
+        </Button>
+      </View>
     </View>
   );
 }

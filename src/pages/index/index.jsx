@@ -1,27 +1,60 @@
 import { View, Text } from "@tarojs/components";
-import { useDidShow, useLoad } from "@tarojs/taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import "./index.css";
 import { WordBook } from "./widgets/word-book";
-import { DayTask } from "./widgets/day-task";
 import { InteractionEntry } from "./widgets/interaction-entry";
 import { getInteractionInfo } from "../../api/interaction";
 import { useContext, useState } from "react";
-import { Context, withContext } from "./context";
+import { IndexContext, withContext } from "./context";
+import { getBookPrecessAPI } from "../../api/word_book";
+import { SearchBar } from "@nutui/nutui-react-taro";
+import { initialState } from "./context";
 
 export default withContext(Index);
 
 function Index() {
-  const { setInteractionInfo } = useContext(Context);
+  const { setInteractionInfo, setBookInfo } = useContext(IndexContext);
   const getInteraction = async () => {
     const res = await getInteractionInfo();
-    console.log(res);
     if (res.code === 200) {
-      setInteractionInfo(res.data);
+      console.log(res, "互动信息");
+      setInteractionInfo((prev) => {
+        return prev.map((item) => {
+          if (res.data[item.type] !== undefined) {
+            return {
+              ...item,
+              value: res.data[item.type],
+            };
+          }
+        });
+      });
+    } else if (res.code === 401) {
+      setInteractionInfo(initialState.interactionInfo);
     }
   };
-  useLoad(() => {
-    console.log("Page loaded.");
+  const getBookInfo = async () => {
+    try {
+      const res = await getBookPrecessAPI();
+      console.log(res, "书籍信息");
+      if (res.code === 200) {
+        setBookInfo((prev) => ({
+          ...prev,
+          review_count: res.data.reviewCount,
+          today_count: res.data.todayCount,
+          totalCount: res.data.totalCount,
+          progress: res.data.progress,
+          learnedCount: res.data.learnedCount,
+          book_name: res.data.bookInfo.book_name,
+          ishave: true,
+        }));
+      } else if (res.code === 401) {
+        setBookInfo(initialState.bookInfo);
+      }
+    } catch (error) {}
+  };
+  useDidShow(() => {
     getInteraction();
+    getBookInfo();
   });
 
   // useDidShow(() => {
@@ -30,10 +63,32 @@ function Index() {
   // });
 
   return (
-    <View className="flex flex-col gap-6">
-      <WordBook></WordBook>
-      <InteractionEntry></InteractionEntry>
-      <DayTask></DayTask>
+    <View className="bg-[#F5F5F5] h-full">
+      <HomeInput></HomeInput>
+      <View className="flex flex-col gap-6">
+        <WordBook></WordBook>
+        <InteractionEntry></InteractionEntry>
+        {/* <DayTask></DayTask> */}
+      </View>
     </View>
   );
 }
+
+const HomeInput = () => {
+  const sysinfo = Taro.getSystemInfoSync();
+  console.log(sysinfo, "sysinfo");
+
+  return (
+    <View
+      className="bg-white"
+      onClick={() => {
+        Taro.navigateTo({
+          url: "/index_subpkg/pages/search-word/index",
+        });
+      }}
+      style={{ paddingTop: `${sysinfo.statusBarHeight}px` }}
+    >
+      <SearchBar placeholder="请输入单词" />
+    </View>
+  );
+};

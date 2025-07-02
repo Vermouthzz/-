@@ -1,43 +1,61 @@
 import { Text, View } from "@tarojs/components";
-// import { CustomHeader } from "../../components/custom-header";
+import { CustomHeader } from "../../../components/custom-header";
 import { Answer } from "./widgets/answer";
 import { useSafeInfo } from "../../../hooks/useSystemInfo";
 import { WordVerify } from "./widgets/word-verify";
+import Taro, { useDidShow, useLoad } from "@tarojs/taro";
+import {
+  collectWordAPI,
+  getSingleWordAPI,
+  recordRawWordAPI,
+} from "../../../api/word";
+import { useContext, useDispatch, withContext } from "../../../hooks/immutable";
+import { WordContext } from "./context";
+import { useRef } from "react";
 
-export default function WordPage() {
-  const { safeBtm } = useSafeInfo().systemInfo;
+export default withContext(WordContext, WordPage);
+function WordPage() {
+  const { currentIndex } = useContext(WordContext);
+  const dispatch = useDispatch(WordContext);
+  const audio = useRef(null);
+  const setting = Taro.getStorageSync("setting");
 
+  const getSingleWord = async () => {
+    const book_id = 1;
+    try {
+      const res = await getSingleWordAPI({ book_id });
+      console.log(res);
+      dispatch((state) => ({
+        ...state,
+        wordInfo: res.data,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useDidShow(() => {
+    // TODO: 获取单词
+    getSingleWord();
+  });
   return (
     <View
       className="h-screen flex flex-col"
-      style={{ background: "linear-gradient(to bottom, #ff6506, #ff9f43)" }}
+      style={{ background: "linear-gradient(135deg, #a8c6b9, #e5e0d2)" }}
     >
-      {/* <CustomHeader></CustomHeader> */}
+      <CustomHeader
+        title={"单词学习"}
+        center={true}
+        arrowColor="#fff"
+      ></CustomHeader>
       <View className="flex-1 flex flex-col items-center justify-around">
-        <Text className="text-white">1/10</Text>
+        <Text className="text-white">{currentIndex}/10</Text>
         <WordVerify></WordVerify>
         <Answer className=""></Answer>
       </View>
-      <Footer
+      {/* <Footer
         style={{ height: `${safeBtm + 100}px`, paddingBottom: `${safeBtm}px` }}
-      ></Footer>
-    </View>
-  );
-}
-
-function Footer({ className, ...props }) {
-  return (
-    <View {...props} className="w-full">
-      <View className="flex items-center justify-center py-2 mb-4 relative">
-        看答案
-        <View className="w-3 h-1 rounded-full absolute bottom-0 left-1/2 -translate-x-1/2 bg-red-600"></View>
-      </View>
-      <View className="flex items-center">
-        <View className="flex-1 text-center">1</View>
-        <View className="flex-1 text-center">2</View>
-        <View className="flex-1 text-center">3</View>
-        <View className="flex-1 text-center">收藏</View>
-      </View>
+      ></Footer> */}
     </View>
   );
 }
